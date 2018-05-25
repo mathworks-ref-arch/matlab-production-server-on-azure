@@ -219,7 +219,7 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
-                                "https://mwstorage24.blob.core.windows.net/azuretemplates/myScript1.ps1"
+                                "https://raw.githubusercontent.com/mathworks-ref-arch/mps-on-azure/master/scripts/myScript1.ps1"
                             ]
                         },
                         "protectedSettings": {
