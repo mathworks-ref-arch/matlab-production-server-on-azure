@@ -1,4 +1,4 @@
-# TEST VERSION, DO NOT US, FOR Test and Verification ONLY
+# TEST VERSION, DO NOT USE, FOR Test and Verification ONLY
 
 # MATLAB Production Server on Microsoft Azure
 
