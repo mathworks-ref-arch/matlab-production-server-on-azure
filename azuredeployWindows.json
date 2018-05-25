@@ -2,35 +2,21 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01-preview/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vmSku": {
+        "Server VM Instance Size": {
             "type": "string",
             "defaultValue": "Standard_D4s_v3",
             "metadata": {
-                "description": "Size of VMs in the VM Scale Set."
+                "description": "Each VM instance will run multiple workers. Select a VM size that is appropriate for your needs. It is recommended that you choose a VM size where the number of cores on your VM match the number of workers per VM you plan on using."
             }
         },
         "instanceCount": {
             "type": "int",
             "defaultValue": 2,
             "metadata": {
-                "description": "Number of VM instances (1000 or less)."
+                "description": "Number of VM instances (24 or less)."
             },
-            "maxValue": 10
-        },
-        "AppGatewaySize": {
-            "type": "string",
-            "defaultValue": "Standard_Small",
-            "metadata": {
-                "description": "Size of the Application Gateway, it is repsonsible for handling traffic to MPS"
-            }
-        },
-        "AppGatewayCount": {
-            "type": "int",
-            "defaultValue": 1,
-            "metadata": {
-                "description": "Number of App Gatway instances, for larger traffic, use more instances."
-            },
-            "maxValue": 20
+            "maxValue": 24,
+            "minValue": 1
         },
         "adminUsername": {
             "type": "string",
@@ -46,24 +32,26 @@
         }
     },
     "variables": {
+        "AppGatewaySize": "Standard_Small",
+        "AppGatewayCount": 1,
         "mpsDNSName": "[concat('mps',uniqueString( resourceGroup().id))]",
-        "storageAccountName": "[concat('mps',uniqueString( resourceGroup().id))]",
-        "storageAccountType": "Standard_GRS",
+        "storageAccountName": "[concat('serverlog',uniqueString( resourceGroup().id))]",
+        "storageAccountType": "Standard_LRS",
         "vmssName": "vmss1",
         "namingInfix": "[toLower(substring(concat(variables('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
         "longNamingInfix": "[toLower(variables('vmssName'))]",
         "addressPrefix": "10.0.0.0/16",
         "subnetPrefix": "10.0.0.0/24",
-        "virtualNetworkName": "[concat(variables('namingInfix'), 'vnet')]",
-        "publicIPAddressName": "[concat(variables('namingInfix'), 'pip')]",
+        "virtualNetworkName": "[concat(variables('namingInfix'), '-vnet')]",
+        "publicIPAddressName": "[concat(variables('namingInfix'), '-pip')]",
         "subnetName": "[concat(variables('namingInfix'), 'subnet')]",
         "subnetRef": "[concat(variables('virtualNetworkID'),'/subnets/',variables('subnetName'))]",
         "nicName": "[concat(variables('namingInfix'), 'nic')]",
         "nicName2": "[concat(variables('namingInfix'), 'nicserv')]",
         "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
         "virtualNetworkID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
-        "appGwPublicIPAddressName": "[concat(variables('namingInfix'), 'appGwPip')]",
-        "appGwName": "[concat(variables('namingInfix'), 'appGw')]",
+        "appGwPublicIPAddressName": "[concat(variables('namingInfix'), '-pip')]",
+        "appGwName": "[concat(variables('namingInfix'), '-agw')]",
         "appGwPublicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('appGwPublicIPAddressName'))]",
         "appGwID": "[resourceId('Microsoft.Network/applicationGateways',variables('appGwName'))]",
         "appGwSubnetName": "[concat(variables('namingInfix'),'appGwSubnet')]",
@@ -74,23 +62,27 @@
         "mpsHttpPortVar": 9910,
         "mpsHttpsPortVar": 9920,
         "appGwBePoolName": "[concat(variables('namingInfix'), 'appGwBepool')]",
-        "computeApiVersion": "2016-04-30-preview",
-        "networkApiVersion": "2016-03-30",
-        "apiVersion": "2015-06-15",
-        "publicIPAddressNameMachine": "lecserverip",
-        "licservernicName": "servermachinenic",
+        "publicIPAddressNameMachine": "servermachine-public-ip",
+        "licservernicName": "servermachine-nic",
         "vmName": "servermachine",
         "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',variables('appGwName'))]",
         "frontendCertPassword": "x509",
-        "frontendCertData": "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"
-
+        "frontendCertData": "MIIKCQIBAzCCCc8GCSqGSIb3DQEHAaCCCcAEggm8MIIJuDCCBG8GCSqGSIb3DQEHBqCCBGAwggRcAgEAMIIEVQYJKoZIhvcNAQcBMBwGCiqGSIb3DQEMAQYwDgQIdt+1vliRLz0CAggAgIIEKKPczWck/EuZyTgHWQpPDfHl/ki0V6lDV60wQktfgVDITIkRfGNeNmXja1RT6U0Zh3Q0Xd8t8ePh6ssqxNFHsoi0pP4nSvC0BZ2Dz+tbZ+UleoAzcpxRQK6LeI/jNd+CCyMP1mVOcmf1qs+oo5CSjVcxL77VRdH3Hc1GlwRdj5ORw50ZOZX8x/TvesUYI8hQsShcmU0iy8bczgbzci0NjAMrUFBwi8dMcLxfgaeKG+9bfvdNV8RSTr67CgObjLgHRSwn0j26IIt5wPYV115GKl3TAMSdN1i5mtD4BLgiW1If78L8cu17a7/BwabGV9TRhcXBJEAH8B/H/rem8JXsakaIDwt/+MsxT0FkM/WF1ZR3fCDRkwuPtLb1vpUL6ZRaLR5YLqHUlTcIlSbtioslvfT3I31ADpFPa+iD7gqoJPAZArer/JRqFmRDxioOmLS3fUS3eEEzpIyOoYDzm+n14orTa+JljpVg43M7VM3odWfFjgs35cAILmTcpQOE5vZ6iOy2POKSiT2s/+jor2lJS/5z+S5gJEvX/zxxPB8AGRjx8xRb/aUquEhYHDSJwAZx8Tf8niq4QSWyFdnpAOR59IdR+X10OmiIqCkZlFQU6MhZ1U9PuwXgPxTI27pqC44j1MTjhC+F06wZGVUDnp6tdjb5M3xxFs49KjPjXjoLb/BkYvq/igh3U+YJzPRMtcJjL1/pyEC+t1DkvWcC7ixNsOGYIeK8t+Ds82evq4C2aVRWu6bOztNgul0za1V8x57KsoY2tFb7OVVay4stO7glCm1Q7yB5cYPPoWLICuvcgGpwHCgs2g4taFe3nbHR1pU+Zp1JRZ8fsK/KYQ6EfkvQ4xOk2KS24LmX4unDwbZygmtQMm/AnDSP1x5SLUOSlw73M5B4WAf9wonE7YN+2zlZnneoQ+wAUVL/tcJNZizmV5vVO6r+AhCqSrlDKGNdSgNmRkVhBRmIguMnMowKn8FFFn26J5hvUYu1gdlaqVAYvc8Q/tfyW+9Zrkt953EbyahzXEoeqlBC8SxrDXg+XLy3EFTFly2nOtjEIuoc9S2tx2dzXv1Bf3vyLtmSZwHAwe3oqBB5ipUHrGxA+kKfsiXIXp83UtXG757jUBhPx1bEOSNrklSkzS7OlT0oqnk56ppYBkhNtusZXqUCLMt9csBXoU63eYqDRFpMp7nxl+JjaeDrou0jNWjFDnzF0TzquOEA+ggoOj/7D2z8zYhvMzXmKn8s9ob3FlCPsQFxBBykj2iQVebSqZdaCFSiMdawx7Nb+lJrHuWiB2GX012mzZ403unNbpbE/vm5YeHHc2X0lXgUJ1YqGHb/jwdPqy1pZ9ZCBk1IW4hBiL/beA6W8wDs5C8wIH6W6uhEEpBBQYlBVFvFi674kKN5Uj4NzoMCw10BPNqCpDg5Lx+kMIIFQQYJKoZIhvcNAQcBoIIFMgSCBS4wggUqMIIFJgYLKoZIhvcNAQwKAQKgggTuMIIE6jAcBgoqhkiG9w0BDAEDMA4ECPe91cO+827rAgIIAASCBMi2K6GVPr2yp5sQlf1d6O1wJLiYsSFpoCfKjELYH8xyugP5NurcoBA9KvCKS7UsLeaEtWn+slzAwrWyZozSIxJ+M3lugC3nlG07+PMMQSu+dfyaQKrzlEO1+7s7uNyqNgrLv9XhdPPQKe9zCkHjm7WB1Mrw1vkc09RZhRN2SI3CM2xF+fqhc8wDXTH1FkKHKByuDRnNwezvvoiB9y+UTv4+SJt9ezinyrSqRv2kUXIldpd2LdLyafKz82b8J2Vr8SMOW9dvqX8YKMy8OChQ9vGQm63oI8wAOmmMjq+9GeicNxDIfyBK+UIy8CV2zdILk4jUVHYkufdtIkaYQdCv3W06SMlqFTpKYKF6abKJXhbFXz4ckRbogPk/VZuEFgl4+JL+dKCY4Mp2rJJCMcaZ8GD1MxYw8Zaa5J8Vb5NpnO2geNQsGDij6WLjH2JFNJLhI2N1/Q11VZQxkqex94CwVplRmyx2ZBQXQY34CpGSv/xe59kSmUrbwEqDu1YyvgLWpjGE34KEQcmFNEuFpcvgYaR2lksUGyyJ7SFxPEywcM9mfpKrsk6tMMXRkrtggk1mXpcVpVXM67Pl0pL53XHzLKiT2wSJVQjvvaKgrEvrM5URNA+jc+zhK7/gI71hOtPtctBFtpe9Zlv9/edI582n8uwp2cDDvugTNokBsQ+1aDKyV1+ZVcnlzGhFH9MWQpbgjdesvqH0ofu7LVJBOHCxv5lxr5qEyTJ1hqr0eKO7M98q8v93GLeOeMHGcM446WVo3GfmBX6T5Pm9a6b+jg1qac5+CKlqIbsnQDC2KkoHTTzxLPtTzFLqAsckSxV6+VgI1MNQsPZb5FDZ3f7Co6g/Y9VhZwAQgJONY6jakyY1zORrE0AJ+NEN8gaGwQ3DPEBp3X8WI9Rq6JTfWjPWkdHjry9DgU1y9IR4/SEKOUAXDyf/SGiPB9lKoJzwPbvh+9WvEfyOthaNHCvH2jyoKuAZ8/O7fftG+nQw56WboKjuUmjJgIHS1qQ3zsrYpZUJT14RSnQK7E7MrgSPw80EqJmZKPI7R1SSlZJM9SJPD42LaG3//JcN2qzaozCf032ne+DwIDlcjYQ0KdNSjnYeXh5814hJgob8oT5wyzzAkgPpPUSpc1UVSCLFa4Jau+kdVS122LkYWTCVthSjOhW8ph/PdQKpLfF4oq2SWYHN6R5c9peW9jVGe1hx4HexcpmQKs4KaMu3YIlY55zZTyhDrzhZLGkSi+cLNwhKc8acPcR1c4sDMSlV8vXkRFM/Eisi+vxT6APvlzbQQ5lu35vY0/h0Elw0f8hp64gEsbJR9mH3lEBd2+4+NwPt0ronMTQMlS+eB1V9lOAAu37IVxUhKHSV945C5towD+tKI8K4J23ljw4unG0xSTSoG3QkcanAjA0EwUHM0BkWAf5y32zacLsgYwclj9qkXOIoP1HQVjlX0Z7lhW4Nb+gRqibEhhoFUDEwnhAGkMEYwIwFKghau//4m6B/1BVKxnqsNTzeG9Boq/sdJePwJpP/drgYpJGlmHqV9cvaUtkhd45yVRTwgOsESTGlVjjnQkH4F5Zo6ZY0glc/icUtXulCuMk7SgW2eifR04hMH5JfXQImNpGg0KDBPVuDC5y3+vJ8NloxJTAjBgkqhkiG9w0BCRUxFgQUN/BF/od76KekW2fFUnn1NU/Y3BUwMTAhMAkGBSsOAwIaBQAEFK+8sFOIsWQPaxXDVTBumuOk9+uzBAiaoJohE58vKAICCAA=",
+        "providerID": "D36A3EDC-0566-4EE4-86D3-64F20D2DDA06",
+        "tagsForAll": {
+            "provider": "[variables('providerID')]"
+        }
     },
     "resources": [
         {
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworkName')]",
             "location": "[resourceGroup().location]",
-            "apiVersion": "[variables('networkApiVersion')]",
+            "apiVersion": "2017-06-01",
+            "tags": {
+                "Description": "Virtual network for the MATLAB Production Server reference architecture",
+                "provider": "[variables('providerID')]"
+            },
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -114,10 +106,14 @@
             }
         },
         {
-            "apiVersion": "[variables('apiVersion')]",
+            "apiVersion": "2017-06-01",
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('publicIPAddressNameMachine')]",
             "location": "[resourceGroup().location]",
+            "tags": {
+                "Description": "Public IP Address of the MATLAB Production Server Console",
+                "provider": "[variables('providerID')]"
+            },
             "properties": {
                 "publicIPAllocationMethod": "Static"
             }
@@ -131,6 +127,10 @@
                 "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameMachine'))]",
                 "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]"
             ],
+            "tags": {
+                "Description": "Network Interface Card (NIC) for the server machine",
+                "provider": "[variables('providerID')]"
+            },
             "properties": {
                 "ipConfigurations": [
                     {
@@ -149,14 +149,17 @@
             }
         },
         {
-            "apiVersion": "[variables('apiVersion')]",
+            "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('vmName')]",
+            "tags": {
+                "Description": "Virtual machine running the MATLAB Production Server Cloud Console and the license manager",
+                "provider": "[variables('providerID')]"
+            },
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
                 "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
-
             ],
             "location": "[resourceGroup().location]",
             "properties": {
@@ -171,8 +174,8 @@
                 "storageProfile": {
                     "imageReference": {
                         "publisher": "mathworks-deployment",
-                        "offer": "mpsdisk-1",
-                        "sku": "mpssku1",
+                        "offer": "refarchmpsdisk1",
+                        "sku": "refarchmpsdisk1sku",
                         "version": "latest"
                     },
                     "osDisk": {
@@ -192,14 +195,13 @@
                 }
             },
             "plan": {
-                "name": "mpssku1",
+                "name": "refarchmpsdisk1sku",
                 "publisher": "mathworks-deployment",
-                "product": "mpsdisk-1"
+                "product": "refarchmpsdisk1"
             },
-
             "resources": [
                 {
-                    "apiVersion": "2015-06-15",
+                    "apiVersion": "2017-03-30",
                     "type": "extensions",
                     "name": "config-app",
                     "location": "[resourceGroup().location]",
@@ -207,7 +209,8 @@
                         "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
                     ],
                     "tags": {
-                        "displayName": "config-app"
+                        "displayName": "config-app",
+                        "provider": "[variables('providerID')]"
                     },
                     "properties": {
                         "publisher": "Microsoft.Compute",
@@ -236,22 +239,30 @@
                 "dnsSettings": {
                     "domainNameLabel": "[variables('mpsDNSName')]"
                 }
+            },
+            "tags": {
+                "Description": "Application gateway public IP",
+                "provider": "[variables('providerID')]"
             }
         },
         {
             "type": "Microsoft.Network/applicationGateways",
             "name": "[variables('appGwName')]",
             "location": "[resourceGroup().location]",
-            "apiVersion": "[variables('networkApiVersion')]",
+            "apiVersion": "2017-10-01",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
                 "[concat('Microsoft.Network/publicIPAddresses/', variables('appGwPublicIPAddressName'))]"
             ],
+            "tags": {
+                "Description": "Application Gateway",
+                "provider": "[variables('providerID')]"
+            },
             "properties": {
                 "sku": {
-                    "name": "[parameters('AppGatewaySize')]",
+                    "name": "[variables('AppGatewaySize')]",
                     "tier": "Standard",
-                    "capacity": "[parameters('AppGatewayCount')]"
+                    "capacity": "[variables('AppGatewayCount')]"
                 },
                 "sslCertificates": [
                     {
@@ -362,20 +373,24 @@
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "name": "[variables('namingInfix')]",
             "location": "[resourceGroup().location]",
-            "apiVersion": "[variables('computeApiVersion')]",
+            "apiVersion": "2017-03-30",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
                 "[concat('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
             ],
+            "tags": {
+                "Description": "VM Scale set that controls how many instances are running",
+                "provider": "[variables('providerID')]"
+            },
             "sku": {
-                "name": "[parameters('vmSku')]",
+                "name": "[parameters('Server VM Instance Size')]",
                 "tier": "Standard",
                 "capacity": "[parameters('instanceCount')]"
             },
             "plan": {
-                "name": "mpsdisk2sku",
+                "name": "refarchmpsdisk2sku",
                 "publisher": "mathworks-deployment",
-                "product": "mpsdisk2"
+                "product": "refarchmpsdisk2"
             },
             "properties": {
                 "overprovision": "true",
@@ -383,11 +398,11 @@
                     "mode": "Manual"
                 },
                 "virtualMachineProfile": {
-                    "storageProfile": {
+                     "storageProfile": {
                         "imageReference": {
                             "publisher": "mathworks-deployment",
-                            "offer": "mpsdisk2",
-                            "sku": "mpsdisk2sku",
+                            "offer": "refarchmpsdisk2",
+                            "sku": "refarchmpsdisk2sku",
                             "version": "latest"
                         },
                         "osDisk": {
@@ -434,13 +449,30 @@
         {
             "name": "[variables('storageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2016-12-01",
+            "apiVersion": "2017-06-01",
             "location": "[resourceGroup().location]",
+            "tags": {
+                "Description": "Storage account where solution logs are stored",
+                "provider": "[variables('providerID')]"
+            },
             "sku": {
                 "name": "[variables('storageAccountType')]"
             },
             "kind": "storage",
             "properties": {}
+        },
+        {
+            "name": "[concat('pid-', toLower(variables('providerID')))]",
+            "apiVersion": "2017-05-10",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
         }
     ],
     "outputs": {

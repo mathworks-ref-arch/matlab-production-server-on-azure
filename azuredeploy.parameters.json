@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "Server VM Instance Size": {
-            "value": "Standard_D1"
+            "value": "Standard_D4s_v3"
         },
         "instanceCount": {
             "value": 2
