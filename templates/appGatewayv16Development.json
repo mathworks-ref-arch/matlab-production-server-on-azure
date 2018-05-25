@@ -1,0 +1,467 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01-preview/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSku": {
+            "type": "string",
+            "defaultValue": "Standard_D4s_v3",
+            "metadata": {
+                "description": "Size of VMs in the VM Scale Set."
+            }
+        },
+        "instanceCount": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Number of VM instances (1000 or less)."
+            },
+            "maxValue": 10
+        },
+        "AppGatewaySize": {
+            "type": "string",
+            "defaultValue": "Standard_Small",
+            "metadata": {
+                "description": "Size of the Application Gateway, it is repsonsible for handling traffic to MPS"
+            }
+        },
+        "AppGatewayCount": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Number of App Gatway instances, for larger traffic, use more instances."
+            },
+            "maxValue": 20
+        },
+        "vmdisk1Uri": {
+            "type": "string",
+            "metadata": {
+                "description": "Uri of the your user image"
+            }
+        },
+        "vmdisk2Uri": {
+            "type": "string",
+            "metadata": {
+                "description": "URI of Disk 2 that has MPS Instance Machines"
+            }
+        },
+        "userImageStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "This is the name of the your storage account"
+            }
+        },
+        "userImageStorageAccountResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group of the existing storage account"
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username on all VMs."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password on all VMs."
+            }
+        }
+    },
+    "variables": {
+        "mpsDNSName": "[concat('mps',uniqueString( resourceGroup().id))]",
+        "storageAccountName": "[concat('mps',uniqueString( resourceGroup().id))]",
+        "storageAccountType": "Standard_GRS",
+        "vmssName": "vmss1",
+        "namingInfix": "[toLower(substring(concat(variables('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
+        "longNamingInfix": "[toLower(variables('vmssName'))]",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetPrefix": "10.0.0.0/24",
+        "virtualNetworkName": "[concat(variables('namingInfix'), 'vnet')]",
+        "publicIPAddressName": "[concat(variables('namingInfix'), 'pip')]",
+        "subnetName": "[concat(variables('namingInfix'), 'subnet')]",
+        "subnetRef": "[concat(variables('virtualNetworkID'),'/subnets/',variables('subnetName'))]",
+        "nicName": "[concat(variables('namingInfix'), 'nic')]",
+        "nicName2": "[concat(variables('namingInfix'), 'nicserv')]",
+        "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
+        "virtualNetworkID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+        "appGwPublicIPAddressName": "[concat(variables('namingInfix'), 'appGwPip')]",
+        "appGwName": "[concat(variables('namingInfix'), 'appGw')]",
+        "appGwPublicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('appGwPublicIPAddressName'))]",
+        "appGwID": "[resourceId('Microsoft.Network/applicationGateways',variables('appGwName'))]",
+        "appGwSubnetName": "[concat(variables('namingInfix'),'appGwSubnet')]",
+        "appGwSubnetPrefix": "10.0.1.0/24",
+        "appGwSubnetID": "[concat(variables('virtualNetworkID'),'/subnets/',variables('appGwSubnetName'))]",
+        "appGwFrontendPort": 8000,
+        "appGwBackendPort": 8000,
+        "mpsHttpPortVar": 9910,
+        "mpsHttpsPortVar": 9920,
+        "appGwBePoolName": "[concat(variables('namingInfix'), 'appGwBepool')]",
+        "computeApiVersion": "2016-04-30-preview",
+        "networkApiVersion": "2016-03-30",
+        "apiVersion": "2015-06-15",
+        "publicIPAddressNameMachine": "lecserverip",
+        "licservernicName": "servermachinenic",
+        "vmName": "servermachine",
+        "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',variables('appGwName'))]",
+        "frontendCertPassword": "x509",
+        "frontendCertData": "MIIKCQIBAzCCCc8GCSqGSIb3DQEHAaCCCcAEggm8MIIJuDCCBG8GCSqGSIb3DQEHBqCCBGAwggRcAgEAMIIEVQYJKoZIhvcNAQcBMBwGCiqGSIb3DQEMAQYwDgQIdt+1vliRLz0CAggAgIIEKKPczWck/EuZyTgHWQpPDfHl/ki0V6lDV60wQktfgVDITIkRfGNeNmXja1RT6U0Zh3Q0Xd8t8ePh6ssqxNFHsoi0pP4nSvC0BZ2Dz+tbZ+UleoAzcpxRQK6LeI/jNd+CCyMP1mVOcmf1qs+oo5CSjVcxL77VRdH3Hc1GlwRdj5ORw50ZOZX8x/TvesUYI8hQsShcmU0iy8bczgbzci0NjAMrUFBwi8dMcLxfgaeKG+9bfvdNV8RSTr67CgObjLgHRSwn0j26IIt5wPYV115GKl3TAMSdN1i5mtD4BLgiW1If78L8cu17a7/BwabGV9TRhcXBJEAH8B/H/rem8JXsakaIDwt/+MsxT0FkM/WF1ZR3fCDRkwuPtLb1vpUL6ZRaLR5YLqHUlTcIlSbtioslvfT3I31ADpFPa+iD7gqoJPAZArer/JRqFmRDxioOmLS3fUS3eEEzpIyOoYDzm+n14orTa+JljpVg43M7VM3odWfFjgs35cAILmTcpQOE5vZ6iOy2POKSiT2s/+jor2lJS/5z+S5gJEvX/zxxPB8AGRjx8xRb/aUquEhYHDSJwAZx8Tf8niq4QSWyFdnpAOR59IdR+X10OmiIqCkZlFQU6MhZ1U9PuwXgPxTI27pqC44j1MTjhC+F06wZGVUDnp6tdjb5M3xxFs49KjPjXjoLb/BkYvq/igh3U+YJzPRMtcJjL1/pyEC+t1DkvWcC7ixNsOGYIeK8t+Ds82evq4C2aVRWu6bOztNgul0za1V8x57KsoY2tFb7OVVay4stO7glCm1Q7yB5cYPPoWLICuvcgGpwHCgs2g4taFe3nbHR1pU+Zp1JRZ8fsK/KYQ6EfkvQ4xOk2KS24LmX4unDwbZygmtQMm/AnDSP1x5SLUOSlw73M5B4WAf9wonE7YN+2zlZnneoQ+wAUVL/tcJNZizmV5vVO6r+AhCqSrlDKGNdSgNmRkVhBRmIguMnMowKn8FFFn26J5hvUYu1gdlaqVAYvc8Q/tfyW+9Zrkt953EbyahzXEoeqlBC8SxrDXg+XLy3EFTFly2nOtjEIuoc9S2tx2dzXv1Bf3vyLtmSZwHAwe3oqBB5ipUHrGxA+kKfsiXIXp83UtXG757jUBhPx1bEOSNrklSkzS7OlT0oqnk56ppYBkhNtusZXqUCLMt9csBXoU63eYqDRFpMp7nxl+JjaeDrou0jNWjFDnzF0TzquOEA+ggoOj/7D2z8zYhvMzXmKn8s9ob3FlCPsQFxBBykj2iQVebSqZdaCFSiMdawx7Nb+lJrHuWiB2GX012mzZ403unNbpbE/vm5YeHHc2X0lXgUJ1YqGHb/jwdPqy1pZ9ZCBk1IW4hBiL/beA6W8wDs5C8wIH6W6uhEEpBBQYlBVFvFi674kKN5Uj4NzoMCw10BPNqCpDg5Lx+kMIIFQQYJKoZIhvcNAQcBoIIFMgSCBS4wggUqMIIFJgYLKoZIhvcNAQwKAQKgggTuMIIE6jAcBgoqhkiG9w0BDAEDMA4ECPe91cO+827rAgIIAASCBMi2K6GVPr2yp5sQlf1d6O1wJLiYsSFpoCfKjELYH8xyugP5NurcoBA9KvCKS7UsLeaEtWn+slzAwrWyZozSIxJ+M3lugC3nlG07+PMMQSu+dfyaQKrzlEO1+7s7uNyqNgrLv9XhdPPQKe9zCkHjm7WB1Mrw1vkc09RZhRN2SI3CM2xF+fqhc8wDXTH1FkKHKByuDRnNwezvvoiB9y+UTv4+SJt9ezinyrSqRv2kUXIldpd2LdLyafKz82b8J2Vr8SMOW9dvqX8YKMy8OChQ9vGQm63oI8wAOmmMjq+9GeicNxDIfyBK+UIy8CV2zdILk4jUVHYkufdtIkaYQdCv3W06SMlqFTpKYKF6abKJXhbFXz4ckRbogPk/VZuEFgl4+JL+dKCY4Mp2rJJCMcaZ8GD1MxYw8Zaa5J8Vb5NpnO2geNQsGDij6WLjH2JFNJLhI2N1/Q11VZQxkqex94CwVplRmyx2ZBQXQY34CpGSv/xe59kSmUrbwEqDu1YyvgLWpjGE34KEQcmFNEuFpcvgYaR2lksUGyyJ7SFxPEywcM9mfpKrsk6tMMXRkrtggk1mXpcVpVXM67Pl0pL53XHzLKiT2wSJVQjvvaKgrEvrM5URNA+jc+zhK7/gI71hOtPtctBFtpe9Zlv9/edI582n8uwp2cDDvugTNokBsQ+1aDKyV1+ZVcnlzGhFH9MWQpbgjdesvqH0ofu7LVJBOHCxv5lxr5qEyTJ1hqr0eKO7M98q8v93GLeOeMHGcM446WVo3GfmBX6T5Pm9a6b+jg1qac5+CKlqIbsnQDC2KkoHTTzxLPtTzFLqAsckSxV6+VgI1MNQsPZb5FDZ3f7Co6g/Y9VhZwAQgJONY6jakyY1zORrE0AJ+NEN8gaGwQ3DPEBp3X8WI9Rq6JTfWjPWkdHjry9DgU1y9IR4/SEKOUAXDyf/SGiPB9lKoJzwPbvh+9WvEfyOthaNHCvH2jyoKuAZ8/O7fftG+nQw56WboKjuUmjJgIHS1qQ3zsrYpZUJT14RSnQK7E7MrgSPw80EqJmZKPI7R1SSlZJM9SJPD42LaG3//JcN2qzaozCf032ne+DwIDlcjYQ0KdNSjnYeXh5814hJgob8oT5wyzzAkgPpPUSpc1UVSCLFa4Jau+kdVS122LkYWTCVthSjOhW8ph/PdQKpLfF4oq2SWYHN6R5c9peW9jVGe1hx4HexcpmQKs4KaMu3YIlY55zZTyhDrzhZLGkSi+cLNwhKc8acPcR1c4sDMSlV8vXkRFM/Eisi+vxT6APvlzbQQ5lu35vY0/h0Elw0f8hp64gEsbJR9mH3lEBd2+4+NwPt0ronMTQMlS+eB1V9lOAAu37IVxUhKHSV945C5towD+tKI8K4J23ljw4unG0xSTSoG3QkcanAjA0EwUHM0BkWAf5y32zacLsgYwclj9qkXOIoP1HQVjlX0Z7lhW4Nb+gRqibEhhoFUDEwnhAGkMEYwIwFKghau//4m6B/1BVKxnqsNTzeG9Boq/sdJePwJpP/drgYpJGlmHqV9cvaUtkhd45yVRTwgOsESTGlVjjnQkH4F5Zo6ZY0glc/icUtXulCuMk7SgW2eifR04hMH5JfXQImNpGg0KDBPVuDC5y3+vJ8NloxJTAjBgkqhkiG9w0BCRUxFgQUN/BF/od76KekW2fFUnn1NU/Y3BUwMTAhMAkGBSsOAwIaBQAEFK+8sFOIsWQPaxXDVTBumuOk9+uzBAiaoJohE58vKAICCAA="
+
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('virtualNetworkName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "[variables('networkApiVersion')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetPrefix')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('appGwSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('appGwSubnetPrefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressNameMachine')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('licservernicName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameMachine'))]",
+                "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNameMachine'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
+                "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
+
+            ],
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D1"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "name": "[concat(variables('vmName'),'-osDisk')]",
+                        "osType": "Windows",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "image": {
+                            "uri": "[parameters('vmdisk1Uri')]"
+                        },
+                        "vhd": {
+                            "uri": "[concat(reference(resourceId(parameters('userImageStorageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts/', parameters('userImageStorageAccountName')), variables('apiVersion')).primaryEndpoints.blob, 'vhds/',variables('vmName'), uniquestring(resourceGroup().id), 'osDisk.vhd')]"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('licservernicName'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[concat(reference(resourceId(parameters('userImageStorageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts/', parameters('userImageStorageAccountName')), variables('apiVersion')).primaryEndpoints.blob)]"
+                    }
+                }
+            },
+
+            "resources": [
+                {
+                    "apiVersion": "2015-06-15",
+                    "type": "extensions",
+                    "name": "config-app",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+                    ],
+                    "tags": {
+                        "displayName": "config-app"
+                    },
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "https://raw.githubusercontent.com/MathworksDeployment/scripts/master/myScript1.ps1"
+                            ]
+                        },
+                        "protectedSettings": {
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File myScript1.ps1 -storageAccountName ' ,variables('storageAccountName'), ' -storageAccountKey ', listKeys(variables('storageAccountName'), '2016-12-01').keys[0].value , ' -mpsEndPoint ', concat('https://',reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn,':9910') )]"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('appGwPublicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2017-10-01",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('mpsDNSName')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "name": "[variables('appGwName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "[variables('networkApiVersion')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('appGwPublicIPAddressName'))]"
+            ],
+            "properties": {
+                "sku": {
+                    "name": "[parameters('AppGatewaySize')]",
+                    "tier": "Standard",
+                    "capacity": "[parameters('AppGatewayCount')]"
+                },
+                "sslCertificates": [
+                    {
+                        "name": "appGatewayFrontEndSslCert",
+                        "properties": {
+                            "data": "[variables('frontendCertData')]",
+                            "password": "[variables('frontendCertPassword')]"
+                        }
+                    }
+                ],
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "appGwIpConfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('appGwSubnetID')]"
+                            }
+                        }
+                    }
+                ],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "appGwFrontendIP",
+                        "properties": {
+                            "PublicIPAddress": {
+                                "id": "[variables('appGwPublicIPAddressID')]"
+                            }
+                        }
+                    }
+                ],
+                "frontendPorts": [
+                    {
+                        "name": "mpsHttpPort",
+                        "properties": {
+                            "Port": "[variables('mpsHttpPortVar')]"
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('appGwBePoolName')]"
+                    }
+                ],
+                "backendHttpSettingsCollection": [
+                    {
+                        "name": "appGwBackendMPSHttpSettings",
+                        "properties": {
+                            "Port": "[variables('mpsHttpPortVar')]",
+                            "Protocol": "Http",
+                            "requestTimeout": 110,
+                            "CookieBasedAffinity": "Enabled",
+                            "probe": {
+                                "id": "[concat(variables('appGwID'),'/probes/mpsfileprobe')]"
+                            }
+                        }
+                    }
+                ],
+                "httpListeners": [
+                    {
+                        "name": "MPSGwHttpListener",
+                        "properties": {
+                            "FrontendIPConfiguration": {
+                                "Id": "[concat(variables('appGwID'), '/frontendIPConfigurations/appGwFrontendIP')]"
+                            },
+                            "FrontendPort": {
+                                "Id": "[concat(variables('appGwID'), '/frontendPorts/mpsHttpPort')]"
+                            },
+                            "Protocol": "Https",
+                            "SslCertificate": {
+                                "Id": "[concat(variables('applicationGatewayID'), '/sslCertificates/appGatewayFrontEndSslCert')]"
+                            }
+                        }
+                    }
+                ],
+                "requestRoutingRules": [
+                    {
+                        "Name": "rule2",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(variables('appGwID'), '/httpListeners/MPSGwHttpListener')]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(variables('appGwID'), '/backendAddressPools/', variables('appGwBePoolName'))]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(variables('appGwID'), '/backendHttpSettingsCollection/appGwBackendMPSHttpSettings')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "mpsfileprobe",
+                        "properties": {
+                            "protocol": "Http",
+                            "host": "127.0.0.1",
+                            "path": "/~files/hello.html",
+                            "interval": 150,
+                            "timeout": 60,
+                            "unhealthyThreshold": 10
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "name": "[variables('namingInfix')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+                "[concat('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
+            ],
+            "sku": {
+                "name": "[parameters('vmSku')]",
+                "tier": "Standard",
+                "capacity": "[parameters('instanceCount')]"
+            },
+            "properties": {
+                "overprovision": "true",
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "name": "vmssosdisk",
+                            "caching": "ReadOnly",
+                            "createOption": "FromImage",
+                            "osType": "Windows",
+                            "image": {
+                                "uri": "[parameters('vmdisk2Uri')]"
+                            }
+                        }
+                    },
+                    "osProfile": {
+                        "computerNamePrefix": "[variables('namingInfix')]",
+                        "adminUsername": "[parameters('adminUsername')]",
+                        "adminPassword": "[parameters('adminPassword')]"
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[variables('nicName')]",
+                                "properties": {
+                                    "primary": "true",
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[variables('ipConfigName')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('subnetName'))]"
+                                                },
+                                                "ApplicationGatewayBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/applicationGateways/', variables('appGwName'), '/backendAddressPools/', variables('appGwBePoolName'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2016-12-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "storage",
+            "properties": {}
+        }
+    ],
+    "outputs": {
+        "dashboardlocation": {
+            "value": "[concat('https://',reference(variables('publicIPAddressNameMachine')).ipAddress,':9000')]",
+            "type": "string"
+        }
+    }
+}
