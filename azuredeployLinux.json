@@ -174,8 +174,8 @@
                 "storageProfile": {
                     "imageReference": {
                         "publisher": "mathworks-deployment",
-                        "offer": "refarchmpsdisk1",
-                        "sku": "refarchmpsdisk1sku",
+                        "offer": "mps-ref-arch-18a-v1-linux-disk1-offer",
+                        "sku": "mps-ref-arch-18a-v1-linux-disk1-sku",
                         "version": "latest"
                     },
                     "osDisk": {
@@ -195,9 +195,9 @@
                 }
             },
             "plan": {
-                "name": "refarchmpsdisk1sku",
+                "name": "mps-ref-arch-18a-v1-linux-disk1-sku",
                 "publisher": "mathworks-deployment",
-                "product": "refarchmpsdisk1"
+                "product": "mps-ref-arch-18a-v1-linux-disk1-offer"
             },
             "resources": [
                 {
@@ -388,9 +388,9 @@
                 "capacity": "[parameters('instanceCount')]"
             },
             "plan": {
-                "name": "refarchmpsdisk2sku",
+                "name": "mps-ref-arch-18a-v1-linux-disk2-sku",
                 "publisher": "mathworks-deployment",
-                "product": "refarchmpsdisk2"
+                "product": "mps-ref-arch-18a-v1-linux-disk2-offer"
             },
             "properties": {
                 "overprovision": "true",
@@ -401,8 +401,8 @@
                      "storageProfile": {
                         "imageReference": {
                             "publisher": "mathworks-deployment",
-                            "offer": "refarchmpsdisk2",
-                            "sku": "refarchmpsdisk2sku",
+                            "offer": "mps-ref-arch-18a-v1-linux-disk2-offer",
+                            "sku": "mps-ref-arch-18a-v1-linux-disk2-sku",
                             "version": "latest"
                         },
                         "osDisk": {
