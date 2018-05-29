@@ -390,7 +390,7 @@
             "plan": {
                 "name": "mps-ref-arch-18a-v1-win-disk2-sku",
                 "publisher": "mathworks-deployment",
-                "product": "mps-ref-arch-18a-v1-win-disk1-offer"
+                "product": "mps-ref-arch-18a-v1-win-disk2-offer"
             },
             "properties": {
                 "overprovision": "true",
