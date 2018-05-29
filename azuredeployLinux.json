@@ -174,7 +174,7 @@
                 "storageProfile": {
                     "imageReference": {
                         "publisher": "mathworks-inc",
-                        "offer": "mps-ref-arch-18a-v1-linux-disk1",
+                        "offer": "mps-ref-arch-18a-v1_0_0-linux-disk1",
                         "sku": "mps-ref-arch-18a-v1-linux-disk1-sku",
                         "version": "latest"
                     },
@@ -197,7 +197,7 @@
             "plan": {
                 "name": "mps-ref-arch-18a-v1-linux-disk1-sku",
                 "publisher": "mathworks-inc",
-                "product": "mps-ref-arch-18a-v1-linux-disk1"
+                "product": "mps-ref-arch-18a-v1_0_0-linux-disk1"
             },
             "resources": [
                 {
