@@ -173,8 +173,8 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "mathworks-deployment",
-                        "offer": "mps-ref-arch-18a-v1-linux-disk1-offer",
+                        "publisher": "mathworks-inc",
+                        "offer": "mps-ref-arch-18a-v1-linux-disk1",
                         "sku": "mps-ref-arch-18a-v1-linux-disk1-sku",
                         "version": "latest"
                     },
@@ -196,8 +196,8 @@
             },
             "plan": {
                 "name": "mps-ref-arch-18a-v1-linux-disk1-sku",
-                "publisher": "mathworks-deployment",
-                "product": "mps-ref-arch-18a-v1-linux-disk1-offer"
+                "publisher": "mathworks-inc",
+                "product": "mps-ref-arch-18a-v1-linux-disk1"
             },
             "resources": [
                 {
@@ -389,8 +389,8 @@
             },
             "plan": {
                 "name": "mps-ref-arch-18a-v1-linux-disk2-sku",
-                "publisher": "mathworks-deployment",
-                "product": "mps-ref-arch-18a-v1-linux-disk2-offer"
+                "publisher": "mathworks-inc",
+                "product": "mps-ref-arch-18a-v1-linux-disk2"
             },
             "properties": {
                 "overprovision": "true",
@@ -400,8 +400,8 @@
                 "virtualMachineProfile": {
                      "storageProfile": {
                         "imageReference": {
-                            "publisher": "mathworks-deployment",
-                            "offer": "mps-ref-arch-18a-v1-linux-disk2-offer",
+                            "publisher": "mathworks-inc",
+                            "offer": "mps-ref-arch-18a-v1-linux-disk2",
                             "sku": "mps-ref-arch-18a-v1-linux-disk2-sku",
                             "version": "latest"
                         },
