@@ -173,7 +173,7 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "mathworks-deployment",
+                        "publisher": "mathworks-inc",
                         "offer": "mps-ref-arch-18a-v1-win-disk1",
                         "sku": "mps-ref-arch-18a-v1-win-disk1-sku",
                         "version": "latest"
@@ -196,7 +196,7 @@
             },
             "plan": {
                 "name": "mps-ref-arch-18a-v1-win-disk1-sku",
-                "publisher": "mathworks-deployment",
+                "publisher": "mathworks-inc",
                 "product": "mps-ref-arch-18a-v1-win-disk1"
             },
             "resources": [
@@ -389,7 +389,7 @@
             },
             "plan": {
                 "name": "mps-ref-arch-18a-v1-win-disk2-sku",
-                "publisher": "mathworks-deployment",
+                "publisher": "mathworks-inc",
                 "product": "mps-ref-arch-18a-v1-win-disk2"
             },
             "properties": {
@@ -400,7 +400,7 @@
                 "virtualMachineProfile": {
                      "storageProfile": {
                         "imageReference": {
-                            "publisher": "mathworks-deployment",
+                            "publisher": "mathworks-inc",
                             "offer": "mps-ref-arch-18a-v1-win-disk2",
                             "sku": "mps-ref-arch-18a-v1-win-disk2-sku",
                             "version": "latest"
