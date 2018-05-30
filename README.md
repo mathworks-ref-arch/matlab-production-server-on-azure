@@ -34,7 +34,6 @@ Click the **Deploy to Azure** button to deploy resources on
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2FazuredeployWindows.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a>  <p>MATLAB Release: R2018a </p>| <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2FazuredeployLinux.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a><p> MATLAB Release: R2018a </p>|
 
-**Note**: Creating resources on Azure can take at least 30 minutes.
 
 ## Step 2. Configure Cloud Resources
 Provide values for parameters in the custom deployment template on the Azure Portal :
