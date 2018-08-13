@@ -176,7 +176,7 @@
                         "publisher": "mathworks-inc",
                         "offer": "mps-ref-arch-18a-v1_0_0-linux-disk1",
                         "sku": "mps-ref-arch-18a-v1-linux-disk1-sku",
-                        "version": "latest"
+                        "version": "1.0.0"
                     },
                     "osDisk": {
                         "createOption": "fromImage",
@@ -403,7 +403,7 @@
                             "publisher": "mathworks-inc",
                             "offer": "mps-ref-arch-18a-v1-linux-disk2",
                             "sku": "mps-ref-arch-18a-v1-linux-disk2-sku",
-                            "version": "latest"
+                            "version": "1.0.0"
                         },
                         "osDisk": {
                             "createOption": "fromImage",
