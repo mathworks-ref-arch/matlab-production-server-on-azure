@@ -34,6 +34,7 @@ Click the **Deploy to Azure** button to deploy resources on
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2FazuredeployWindows.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a>  <p>MATLAB Release: R2018a </p>| <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2FazuredeployLinux.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a><p> MATLAB Release: R2018a </p>|
 
+**Note**: Creating resources on Azure can take at least 30 minutes.
 
 ## Step 2. Configure Cloud Resources
 Provide values for parameters in the custom deployment template on the Azure Portal :
@@ -45,8 +46,9 @@ Provide values for parameters in the custom deployment template on the Azure Por
 | **Location**                | Choose the region to start resources in. Ensure that you select a location which supports your requested instance types. To check which services are supported in each location, see [Azure Region Services](<https://azure.microsoft.com/en-gb/regions/services/>). We recommend you use East US or East US 2. <p><em>Example:</em> East US</p>                                                                                                                                                                                                                          |
 | **Server VM Instance Size** | Specify the size of the VM you plan on using for deployment. Each MATLAB Production Server instance runs on a VM and each instance will run multiple workers. We recommend you choose a VM size where the number of cores on your VM match the number of MATLAB workers per VM you plan on using. The template defaults to: Standard_D4s_v3. This configuration has 4 vCPUs and 16 GiB of Memory. For more information, see Azure [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-general). <p><em>Example:</em> Standard_D4s_v3</p> |
 | **Instance Count**          | Number of VMs to run MATLAB Production Server instances. Each MATLAB Production Server instance runs on a VM and each instance will run multiple workers. The maximum number of MATLAB Production Server instances is limited to 24. This means only a maximum of 24 VMs can be provisioned. Therefore, your instance count cannot exceed 24. <p><em>Example:</em> 6</p><p>If you have a standard 24 worker MATLAB Production Server license and select Standard_D4s_v3 VM (4 cores) as the Server VM Instance Size, you will need 6 VMs to fully utilize the workers in your license. Therefore, your instance count will be 6.</p><p>You can always under provision the number of VMs. In which case you may end up using fewer workers than you are licensed for.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| **Admin Username**          | Specify the admin user name for all VMs. This will be username to log in to the MATLAB Production Server Cloud Console.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| **Admin Password**          | Specify the admin password for all VMs. This will be the password to log in to the MATLAB Production Server Cloud Console.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+| **Admin Username**          | Specify the admin user name for all VMs. This will be the username to log in to the MATLAB Production Server Cloud Console.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **Admin Password**          | Specify the admin password for all VMs. This will be the password to log in to the MATLAB Production Server Cloud Console.  |
+| **Allow connections from** | This is the IP address range that will be allowed to connect to the cloud console that manages the server. The format for this field is IP Address/Mask. <p><em>Example</em>: </p>10.0.0.1/32 <ul><li>This is the public IP address which can be found by searching for "what is my ip address" on the web. The mask determines the number of IP addresses to include.</li><li>A mask of 32 is a single IP address.</li><li>Use a [CIDR calculator](https://www.ipaddressguide.com/cidr) if you need a range of more than one IP addresses.</li><li>You may need to contact your IT administrator to determine which address is appropriate.</li></ul></p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 <br />
 
@@ -149,10 +151,32 @@ resource group.
 | Storage account                                                            | `serverlog<uniqueID>`   | NA                  | Storage account where logs for the reference architecture are stored. The server logs are stored in an Azure Table.                                                                                                                                                                                                  |
 | Virtual network                                                            | `vmss<uniqueID>-vnet`   | 1                   | Enables resources to communicate with each other.                                                                                                                                                                                                                                                                                  |
 
+
+# FAQ
+## What versions of MATLAB Runtime are supported?
+
+* R2015b
+* R2016a
+* R2016b
+* R2017a
+* R2017b
+* R2018a
+
+
+
+## Why do requests to the server fail with errors such as “untrusted certificate” or “security exception”?  
+
+These errors result from either CORS not being enabled on the server or due to the fact that the server endpoint uses a self-signed 
+certificate. 
+
+If you are making an AJAX request to the server, make sure that CORS is enabled in the server configuration. You can enable CORS by editing the property `--cors-allowed-origins` in the config file. For more information, see [Edit the Server Configuration](/doc/cloudConsoleDoc.md#edit-the-server-configuration).
+
+Also, some HTTP libraries and Javascript AJAX calls will reject a request originating from a server that uses a self-signed certificate. You may need to manually override the default security behavior of the client application. Or you can add a new 
+HTTP/HTTPS endpoint to the application gateway. For more information, see [Create a Listener](/doc/cloudConsoleDoc.md#create-a-listener). 
+
 # Enhancement Request
 Provide suggestions for additional features or capabilities using the following link: 
 https://www.mathworks.com/cloud/enhancement-request.html
 
 # Technical Support
 Email: `cloud-support@mathworks.com`
-
