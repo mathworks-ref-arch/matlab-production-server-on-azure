@@ -152,6 +152,9 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworkName')]",
             "location": "[resourceGroup().location]",
+			"dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]" 
+            ],
             "apiVersion": "2017-06-01",
             "tags": {
                 "Description": "Virtual network for the MATLAB Production Server reference architecture",
