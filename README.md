@@ -30,11 +30,12 @@ For information about the architecture of this solution, see [Architecture and R
 Click the **Deploy to Azure** button to deploy resources on
     Azure. This will open the Azure Portal in your web browser.
 
-| Windows Server 2016 VM                                                                                                                                                                                                                            | Ubuntu 16.04 VM                                                                                                                                                                                                                                   |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2FazuredeployWindows.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a>  <p>MATLAB Release: R2018a </p>| <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2FazuredeployLinux.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a><p> MATLAB Release: R2018a </p>|
+| Release | Windows Server 2016 VM | Ubuntu 16.04 VM |
+|---------------|------------------------|-----------------|
+| MATLAB R2018b | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2Ftemplates%2FazuredeployWindows18b.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a> | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2Ftemplates%2FazuredeployLinux18b.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a> |
 
-**Note**: Creating resources on Azure can take at least 30 minutes.
+For other releases, see [How do I launch a template that uses a previous MATLAB release?](#how-do-i-launch-a-template-that-uses-a-previous-matlab-release)
+<p><strong>Note:</strong> Creating resources on Azure can take at least 30 minutes.</p>
 
 ## Step 2. Configure Cloud Resources
 Provide values for parameters in the custom deployment template on the Azure Portal :
@@ -47,7 +48,7 @@ Provide values for parameters in the custom deployment template on the Azure Por
 | **Server VM Instance Size** | Specify the size of the VM you plan on using for deployment. Each MATLAB Production Server instance runs on a VM and each instance will run multiple workers. We recommend you choose a VM size where the number of cores on your VM match the number of MATLAB workers per VM you plan on using. The template defaults to: Standard_D4s_v3. This configuration has 4 vCPUs and 16 GiB of Memory. For more information, see Azure [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-general). <p><em>Example:</em> Standard_D4s_v3</p> |
 | **Instance Count**          | Number of VMs to run MATLAB Production Server instances. Each MATLAB Production Server instance runs on a VM and each instance will run multiple workers. The maximum number of MATLAB Production Server instances is limited to 24. This means only a maximum of 24 VMs can be provisioned. Therefore, your instance count cannot exceed 24. <p><em>Example:</em> 6</p><p>If you have a standard 24 worker MATLAB Production Server license and select Standard_D4s_v3 VM (4 cores) as the Server VM Instance Size, you will need 6 VMs to fully utilize the workers in your license. Therefore, your instance count will be 6.</p><p>You can always under provision the number of VMs. In which case you may end up using fewer workers than you are licensed for.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | **Admin Username**          | Specify the admin user name for all VMs. This will be the username to log in to the MATLAB Production Server Cloud Console.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| **Admin Password**          | Specify the admin password for all VMs. This will be the password to log in to the MATLAB Production Server Cloud Console.  |
+| **Admin Password**          | Specify the admin password for all VMs. This will be the password to log in to the MATLAB Production Server Cloud Console. <p><strong>Note:</strong> Your password must not contain single (`'`) or double (`"`) quotes.|
 | **Allow connections from** | This is the IP address range that will be allowed to connect to the cloud console that manages the server. The format for this field is IP Address/Mask. <p><em>Example</em>: </p>10.0.0.1/32 <ul><li>This is the public IP address which can be found by searching for "what is my ip address" on the web. The mask determines the number of IP addresses to include.</li><li>A mask of 32 is a single IP address.</li><li>Use a [CIDR calculator](https://www.ipaddressguide.com/cidr) if you need a range of more than one IP addresses.</li><li>You may need to contact your IT administrator to determine which address is appropriate.</li></ul></p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 <br />
@@ -153,14 +154,18 @@ resource group.
 
 
 # FAQ
+## How do I launch a template that uses a previous MATLAB release?
+| Release | Windows Server 2016 VM | Ubuntu 16.04 VM |
+|---------------|------------------------|-----------------|
+| MATLAB R2018a | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2Ftemplates%2FazuredeployWindows18a.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a> | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmps-on-azure%2Fmaster%2Ftemplates%2FazuredeployLinux18a.json" target="_blank"> <img src="http://azuredeploy.net/deploybutton.png"/> </a> |
+
+
 ## What versions of MATLAB Runtime are supported?
 
-* R2015b
-* R2016a
-* R2016b
-* R2017a
-* R2017b
-* R2018a
+| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime |
+|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
+| MATLAB R2018a | R2015b | R2016a | R2016b | R2017a | R2017b | R2018a |  |
+| MATLAB R2018b |  | R2016a | R2016b | R2017a | R2017b | R2018a | R2018b |
 
 
 

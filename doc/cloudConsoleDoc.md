@@ -50,7 +50,7 @@ symbol and assign a value.
 
 `--cors-allowed-origins http://www.w3.org, https://www.apache.org`
 
->**NOTE**: When setting the `num-workers` property in the server configuration you need to carefully consider your cluster setup. Each virtual machine in the cluster runs an instance of MATLAB Production Server and each instance runs multiple MATLAB workers. MathWorks recommends 1 core per MATLAB worker. For example, a `Standard_D4s_v3` **Server VM Instance Size** has 4 cores and therefore we recommend that you set `num-workers` be no more than 4 per instance.<p>`--num-workers 4`</p> 
+>**NOTE**: When setting the `num-workers` property in the server configuration you need to carefully consider your cluster setup. Each virtual machine in the cluster runs an instance of MATLAB Production Server and each instance runs multiple MATLAB workers. MathWorks recommends 1 core per MATLAB worker. For example, a `Standard_D4s_v3` **Server VM Instance Size** has 4 cores; therefore, we recommend you set `num-workers` be no more than 4 per instance.<p>`--num-workers 4`</p> 
 
 [Back to Top](/doc/cloudConsoleDoc.md#matlab-production-server-cloud-console-users-guide) | [Back to Main](/README.md#matlab-production-server-on-azure)
 
@@ -87,7 +87,7 @@ need to log out and log back in.
 ## View Logs
 Logs are stored in your Azure storage account and can be viewed using the Azure Storage Explorer. To view server logs:
 
-1. Download and install the Storage Explorer.
+1. Download and install the Microsoft Azure Storage Explorer.
 2. Sign-on using your Azure account.
 3. Expand the storage account associated with your selected Azure subscription. The storage account name is diplayed in the View Logs section of the cloud console. 
 4. Expand Tables and view: MasterController, mpsInstances, mpsNative
@@ -136,7 +136,7 @@ To change the self-signed certificate to the application gateway you need to com
 ### Create a Listener
 <ol>
 <li>In the resource group for the solution, select the application gateway
-    resource with the name vmss\<uniqueID\>-agw.</li>
+    resource with the name <code>vmss&lt;uniqueID&gt;-agw</code>.</li>
 
 <li>Select <strong>Listeners</strong> from the navigation panel on the left and click
     <strong>+Basic</strong> at the top of the expanded panel.</li>
