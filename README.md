@@ -73,14 +73,16 @@ Click **Purchase** to begin the deployment. This can take up to 40 minutes.
 
 4.  Copy the IP address from the IP address field.
 
-5.  In your browser, connect to the cloud console using the IP address and the default port of `9000`. 
+5.  In your browser, connect to the cloud console using the IP address.  
 
 >   *Example:*
-
->   https://<span></span>11.22.135.137:9000
-
+>   https://<span></span>11.22.135.137
 
 You will now be connected to the MATLAB Production Server Cloud Console.
+
+If you are using a template from a MATLAB release prior to R2018b, you will need to specify a port number of `9000`.
+>   *Example:*
+>   https://<span></span>11.22.135.137:9000
 
 ## Step 4. Log in to the Cloud Console
 Use the admin username and password you created in [Step.2](#step-2-configure-cloud-resources) while configuring your
