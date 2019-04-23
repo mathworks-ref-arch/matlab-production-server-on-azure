@@ -181,10 +181,10 @@
         "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
         "LinuxSKUDisk2": "mps-ref-arch-18a-v1-linux-disk2-sku",
         "LinuxOfferDisk2": "mps-ref-arch-18a-v1-linux-disk2",
-        "WindowsDisk1Version": "3.0.0",
-        "WindowsDisk2Version": "3.0.1",
+        "WindowsDisk1Version": "3.0.2",
+        "WindowsDisk2Version": "3.0.2",
         "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
-        "LinuxDisk2Version": "3.0.1",
+        "LinuxDisk2Version": "3.0.2",
         "providerID": "D36A3EDC-0566-4EE4-86D3-64F20D2DDA06",
         "tagsForAll": {
             "provider": "[variables('providerID')]"
