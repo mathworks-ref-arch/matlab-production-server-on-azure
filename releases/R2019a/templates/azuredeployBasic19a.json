@@ -31,14 +31,47 @@
             }
         },
         "Allow connections from": {
-      "type": "string",
-      "metadata": {
-        "description": "String identifying the client CIDR or IP range which will be allowed to use the solution."
-      }
-    }
+            "type": "string",
+            "metadata": {
+                "description": "String identifying the client CIDR or IP range which will be allowed to use the solution."
+            }
+        },
+        "CreateAzureRedisCache": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Specify whether you want to create an Azure Redis Cache that lets you use the persistence functionality on the server."
+            }
+        },
+        "UsePublicIPAddresses": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Specify whether you want to use public IP addresses and make your solution available over the Internet."
+            }
+        },
+        "Platform": {
+            "type": "string",
+            "defaultValue": "Windows",
+            "allowedValues": [
+                "Windows",
+                "Linux"
+            ],
+            "metadata": {
+                "description": "Select the operating system for the server."
+            }
+        }
     },
     "variables": {
-        "AppGatewaySize": "Standard_Small",
+        "AppGatewaySize": "Standard_v2",
         "AppGatewayCount": 1,
         "mpsDNSName": "[concat('mps',uniqueString( resourceGroup().id))]",
         "storageAccountName": "[concat('serverlog',uniqueString( resourceGroup().id))]",
@@ -48,19 +81,22 @@
         "longNamingInfix": "[toLower(variables('vmssName'))]",
         "addressPrefix": "10.0.0.0/16",
         "subnetPrefix": "10.0.0.0/24",
-        "virtualNetworkName": "[concat(variables('namingInfix'), '-vnet')]",
+        "virtualNetworkName": "mps-network",
+        "virtualNetworkApiVersion": "2018-08-01",
         "publicIPAddressName": "[concat(variables('namingInfix'), '-pip')]",
-        "subnetName": "[concat(variables('namingInfix'), 'subnet')]",
+        "subnetName": "default",
         "subnetRef": "[concat(variables('virtualNetworkID'),'/subnets/',variables('subnetName'))]",
         "nicName": "[concat(variables('namingInfix'), 'nic')]",
         "nicName2": "[concat(variables('namingInfix'), 'nicserv')]",
         "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
-        "virtualNetworkID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+        "ResourceGroupNameOfVirtualNetwork": "[resourceGroup().name]",
+        "virtualNetworkID": "[resourceId(variables('ResourceGroupNameOfVirtualNetwork'), 'Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+        "virtualNetworkResourceGroupName": "[variables('ResourceGroupNameOfVirtualNetwork')]",
         "appGwPublicIPAddressName": "[concat(variables('namingInfix'), '-pip')]",
         "appGwName": "[concat(variables('namingInfix'), '-agw')]",
         "appGwPublicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('appGwPublicIPAddressName'))]",
         "appGwID": "[resourceId('Microsoft.Network/applicationGateways',variables('appGwName'))]",
-        "appGwSubnetName": "[concat(variables('namingInfix'),'appGwSubnet')]",
+        "appGwSubnetName": "appGwSubnet",
         "appGwSubnetPrefix": "10.0.1.0/24",
         "appGwSubnetID": "[concat(variables('virtualNetworkID'),'/subnets/',variables('appGwSubnetName'))]",
         "appGwFrontendPort": 8000,
@@ -71,91 +107,143 @@
         "appGwBePoolName": "[concat(variables('namingInfix'), 'appGwBepool')]",
         "networkSecurityGroupName": "[concat(variables('namingInfix'), '-rdp-nsg')]",
         "publicIPAddressNameMachine": "servermachine-public-ip",
+        "redisCacheName": "[concat(variables('namingInfix'), 'redis')]",
+        "redisenableNonSslPort": true,
+        "redisCacheCapacity": 1,
+        "redisCacheFamily": "C",
+        "redisCacheSKU": "Standard",
+        "appGWprivateIP": "10.0.1.24",
+        "virtualNetworkNewOrExisting": "new",
         "licservernicName": "servermachine-nic",
         "vmName": "servermachine",
+        "publicIPprop1": {
+            "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNameMachine'))]"
+        },
+        "publicIPRule": {
+            "Name": "rule2",
+            "properties": {
+                "RuleType": "Basic",
+                "httpListener": {
+                    "id": "[concat(variables('appGwID'), '/httpListeners/MPSGwHttpListener')]"
+                },
+                "backendAddressPool": {
+                    "id": "[concat(variables('appGwID'), '/backendAddressPools/', variables('appGwBePoolName'))]"
+                },
+                "backendHttpSettings": {
+                    "id": "[concat(variables('appGwID'), '/backendHttpSettingsCollection/appGwBackendMPSHttpSettings')]"
+                }
+            }
+        },
         "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',variables('appGwName'))]",
         "frontendCertPassword": "x509",
         "frontendCertData": "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",
+        "Platform": "[parameters('Platform')]",
+        "WindowsSKUDisk1": "mps-ref-arch-18a-v1-win-disk1-sku",
+        "WindowsOfferDisk1": "mps-ref-arch-18a-v1-win-disk1",
+        "WindowsSKUDisk2": "mps-ref-arch-18a-v1-win-disk2-sku",
+        "WindowsOfferDisk2": "mps-ref-arch-18a-v1-win-disk2",
+        "LinuxSKUDisk1": "[variables('WindowsSKUDisk1')]",
+        "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
+        "LinuxSKUDisk2": "mps-ref-arch-18a-v1-linux-disk2-sku",
+        "LinuxOfferDisk2": "mps-ref-arch-18a-v1-linux-disk2",
+        "WindowsDisk1Version": "3.0.0",
+        "WindowsDisk2Version": "3.0.1",
+        "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
+        "LinuxDisk2Version": "3.0.1",
         "providerID": "D36A3EDC-0566-4EE4-86D3-64F20D2DDA06",
         "tagsForAll": {
             "provider": "[variables('providerID')]"
         }
     },
     "resources": [
-    {
-      "name": "[variables('networkSecurityGroupName')]",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2017-03-01",
-      "location": "[resourceGroup().location]",
-      "tags": {
+        {
+            "name": "[variables('networkSecurityGroupName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "[variables('virtualNetworkApiVersion')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
                 "Description": "Network Security Group to control access to resources",
                 "provider": "[variables('providerID')]"
             },
-      "properties": {
-        "securityRules": [
-          {
-            "name": "default-allow-mps-port443",
             "properties": {
-              "priority": 1000,
-              "sourceAddressPrefix": "[parameters('Allow connections from')]",
-              "protocol": "Tcp",
-              "destinationPortRange": "443",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*"
+                "securityRules": [
+                    {
+                        "name": "default-allow-mps-port443",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "[parameters('Allow connections from')]",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "443",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "default-allow-mps-port9910",
+                        "properties": {
+                            "priority": 1001,
+                            "sourceAddressPrefix": "[parameters('Allow connections from')]",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "443",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "default-allow-mps-port8000",
+                        "properties": {
+                            "priority": 1002,
+                            "sourceAddressPrefix": "[parameters('Allow connections from')]",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "8000",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1003,
+                            "sourceAddressPrefix": "[parameters('Allow connections from')]",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "default-allow-appgw-traffic",
+                        "properties": {
+                            "priority": 1004,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "*",
+                            "destinationPortRange": "65200-65535",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
             }
-          },
-          {
-            "name": "default-allow-mps-port9910",
-            "properties": {
-              "priority": 1001,
-              "sourceAddressPrefix": "[parameters('Allow connections from')]",
-              "protocol": "Tcp",
-              "destinationPortRange": "443",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*"
-            }
-          },
-          {
-            "name": "default-allow-mps-port8000",
-            "properties": {
-              "priority": 1002,
-              "sourceAddressPrefix": "[parameters('Allow connections from')]",
-              "protocol": "Tcp",
-              "destinationPortRange": "8000",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*"
-            }
-          },
-          {
-            "name": "default-allow-rdp",
-            "properties": {
-              "priority": 1003,
-              "sourceAddressPrefix": "[parameters('Allow connections from')]",
-              "protocol": "Tcp",
-              "destinationPortRange": "3389",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*"
-            }
-          }
-        ]
-      }
-    },
+        },
         {
+            "condition": "[equals(variables('virtualNetworkNewOrExisting'), 'new')]",
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworkName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]" 
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]"
             ],
-            "apiVersion": "2017-06-01",
+            "apiVersion": "2018-08-01",
             "tags": {
                 "Description": "Virtual network for the MATLAB Production Server reference architecture",
                 "provider": "[variables('providerID')]"
@@ -172,8 +260,8 @@
                         "properties": {
                             "addressPrefix": "[variables('subnetPrefix')]",
                             "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-        }
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            }
                         }
                     },
                     {
@@ -181,16 +269,20 @@
                         "properties": {
                             "addressPrefix": "[variables('appGwSubnetPrefix')]",
                             "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-        }
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            }
                         }
                     }
                 ]
             }
         },
         {
-            "apiVersion": "2017-06-01",
+            "condition": "[equals(parameters('UsePublicIPAddresses'), 'Yes')]",
+            "apiVersion": "2018-08-01",
             "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Standard"
+            },
             "name": "[variables('publicIPAddressNameMachine')]",
             "location": "[resourceGroup().location]",
             "tags": {
@@ -202,12 +294,12 @@
             }
         },
         {
-            "apiVersion": "2016-03-30",
+            "apiVersion": "2018-08-01",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('licservernicName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameMachine'))]",
+                "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameMachine')), concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName')))]",
                 "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]"
             ],
             "tags": {
@@ -220,9 +312,7 @@
                         "name": "ipconfig1",
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNameMachine'))]"
-                            },
+                            "publicIPAddress": "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'), variables('publicIPprop1'), json('null'))]",
                             "subnet": {
                                 "id": "[variables('subnetRef')]"
                             }
@@ -230,12 +320,12 @@
                     }
                 ],
                 "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-        }
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                }
             }
         },
         {
-            "apiVersion": "2017-03-30",
+            "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('vmName')]",
             "tags": {
@@ -250,7 +340,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "Standard_D1"
+                    "vmSize": "Standard_D1_v2"
                 },
                 "osProfile": {
                     "computerName": "[variables('vmName')]",
@@ -260,9 +350,9 @@
                 "storageProfile": {
                     "imageReference": {
                         "publisher": "mathworks-inc",
-                        "offer": "mps-ref-arch-18a-v1_0_0-linux-disk1",
-                        "sku": "mps-ref-arch-18a-v1-linux-disk1-sku",
-                        "version": "2.2.0"
+                        "offer": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsOfferDisk1'),  variables('LinuxOfferDisk1'))]",
+                        "sku": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsSKUDisk1'),  variables('LinuxSKUDisk1'))]",
+                        "version": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsDisk1Version'),  variables('LinuxDisk1Version'))]"
                     },
                     "osDisk": {
                         "createOption": "fromImage",
@@ -281,13 +371,13 @@
                 }
             },
             "plan": {
-                "name": "mps-ref-arch-18a-v1-linux-disk1-sku",
+                "name": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsSKUDisk1'),  variables('LinuxSKUDisk1'))]",
                 "publisher": "mathworks-inc",
-                "product": "mps-ref-arch-18a-v1_0_0-linux-disk1"
+                "product": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsOfferDisk1'),  variables('LinuxOfferDisk1'))]"
             },
             "resources": [
                 {
-                    "apiVersion": "2017-03-30",
+                    "apiVersion": "2018-10-01",
                     "type": "extensions",
                     "name": "config-app",
                     "location": "[resourceGroup().location]",
@@ -305,11 +395,11 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
-                                "https://raw.githubusercontent.com/mathworks-ref-arch/mps-on-azure/master/scripts/initScript.ps1"
+                                "https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2019a/scripts/initScript.ps1"
                             ]
                         },
                         "protectedSettings": {
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File initScript.ps1 -storageAccountName ' ,variables('storageAccountName'), ' -storageAccountKey ', listKeys(variables('storageAccountName'), '2016-12-01').keys[0].value , ' -mpsEndPoint ', concat('https://',reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), ' -CIDRRange ', ' 10.0.0.0/24' )]"
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File initScript.ps1 -storageAccountName ' ,variables('storageAccountName'), ' -storageAccountKey ', listKeys(variables('storageAccountName'), '2016-12-01').keys[0].value , ' -mpsEndPoint ', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://',reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://',variables('appGWprivateIP'),':444')) , ' -CIDRRange ', reference(variables('subnetRef'), variables('virtualNetworkApiVersion')).addressPrefix, ' -cloudPlatform Azure ', ' -osPlatform ', parameters('Platform') )]"
                         }
                     }
                 }
@@ -317,11 +407,14 @@
         },
         {
             "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Standard"
+            },
             "name": "[variables('appGwPublicIPAddressName')]",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2017-10-01",
+            "apiVersion": "2018-08-01",
             "properties": {
-                "publicIPAllocationMethod": "Dynamic",
+                "publicIPAllocationMethod": "Static",
                 "dnsSettings": {
                     "domainNameLabel": "[variables('mpsDNSName')]"
                 }
@@ -335,7 +428,7 @@
             "type": "Microsoft.Network/applicationGateways",
             "name": "[variables('appGwName')]",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2017-10-01",
+            "apiVersion": "2018-10-01",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
                 "[concat('Microsoft.Network/publicIPAddresses/', variables('appGwPublicIPAddressName'))]"
@@ -347,7 +440,7 @@
             "properties": {
                 "sku": {
                     "name": "[variables('AppGatewaySize')]",
-                    "tier": "Standard",
+                    "tier": "Standard_v2",
                     "capacity": "[variables('AppGatewayCount')]"
                 },
                 "sslCertificates": [
@@ -371,10 +464,20 @@
                 ],
                 "frontendIPConfigurations": [
                     {
-                        "name": "appGwFrontendIP",
+                        "name": "appGwFrontendPublicIP",
                         "properties": {
                             "PublicIPAddress": {
                                 "id": "[variables('appGwPublicIPAddressID')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "appGwFrontendPrivateIP",
+                        "properties": {
+                            "privateIPAddress": "[variables('appGWprivateIP')]",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[variables('appGwSubnetID')]"
                             }
                         }
                     }
@@ -384,6 +487,12 @@
                         "name": "mpsHttpPort",
                         "properties": {
                             "Port": "[variables('mpsFrontEndPort')]"
+                        }
+                    },
+                    {
+                        "name": "mpsHttpPort2",
+                        "properties": {
+                            "Port": 444
                         }
                     }
                 ],
@@ -411,10 +520,25 @@
                         "name": "MPSGwHttpListener",
                         "properties": {
                             "FrontendIPConfiguration": {
-                                "Id": "[concat(variables('appGwID'), '/frontendIPConfigurations/appGwFrontendIP')]"
+                                "Id": "[concat(variables('appGwID'), '/frontendIPConfigurations/appGwFrontendPublicIP')]"
                             },
                             "FrontendPort": {
                                 "Id": "[concat(variables('appGwID'), '/frontendPorts/mpsHttpPort')]"
+                            },
+                            "Protocol": "Https",
+                            "SslCertificate": {
+                                "Id": "[concat(variables('applicationGatewayID'), '/sslCertificates/appGatewayFrontEndSslCert')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "MPSGwPrivateHttpListener",
+                        "properties": {
+                            "FrontendIPConfiguration": {
+                                "Id": "[concat(variables('appGwID'), '/frontendIPConfigurations/appGwFrontendPrivateIP')]"
+                            },
+                            "FrontendPort": {
+                                "Id": "[concat(variables('appGwID'), '/frontendPorts/mpsHttpPort2')]"
                             },
                             "Protocol": "Https",
                             "SslCertificate": {
@@ -425,11 +549,11 @@
                 ],
                 "requestRoutingRules": [
                     {
-                        "Name": "rule2",
+                        "Name": "rule3",
                         "properties": {
                             "RuleType": "Basic",
                             "httpListener": {
-                                "id": "[concat(variables('appGwID'), '/httpListeners/MPSGwHttpListener')]"
+                                "id": "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat(variables('appGwID'), '/httpListeners/MPSGwHttpListener'),  concat(variables('appGwID'), '/httpListeners/MPSGwPrivateHttpListener') )]"
                             },
                             "backendAddressPool": {
                                 "id": "[concat(variables('appGwID'), '/backendAddressPools/', variables('appGwBePoolName'))]"
@@ -459,7 +583,7 @@
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "name": "[variables('namingInfix')]",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2017-03-30",
+            "apiVersion": "2018-10-01",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
                 "[concat('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
@@ -474,9 +598,9 @@
                 "capacity": "[parameters('instanceCount')]"
             },
             "plan": {
-                "name": "mps-ref-arch-18a-v1-linux-disk2-sku",
+                "name": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsSKUDisk2'),  variables('LinuxSKUDisk2'))]",
                 "publisher": "mathworks-inc",
-                "product": "mps-ref-arch-18a-v1-linux-disk2"
+                "product": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsOfferDisk2'),  variables('LinuxOfferDisk2'))]"
             },
             "properties": {
                 "overprovision": "true",
@@ -484,12 +608,12 @@
                     "mode": "Manual"
                 },
                 "virtualMachineProfile": {
-                     "storageProfile": {
+                    "storageProfile": {
                         "imageReference": {
                             "publisher": "mathworks-inc",
-                            "offer": "mps-ref-arch-18a-v1-linux-disk2",
-                            "sku": "mps-ref-arch-18a-v1-linux-disk2-sku",
-                            "version": "2.0.0"
+                            "offer": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsOfferDisk2'),  variables('LinuxOfferDisk2'))]",
+                            "sku": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsSKUDisk2'),  variables('LinuxSKUDisk2'))]",
+                            "version": "[if(equals(parameters('Platform'), 'Windows'), variables('WindowsDisk2Version'),  variables('LinuxDisk2Version'))]"
                         },
                         "osDisk": {
                             "createOption": "fromImage",
@@ -515,7 +639,7 @@
                                             "name": "[variables('ipConfigName')]",
                                             "properties": {
                                                 "subnet": {
-                                                    "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('subnetName'))]"
+                                                    "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', variables('virtualNetworkResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('subnetName'))]"
                                                 },
                                                 "ApplicationGatewayBackendAddressPools": [
                                                     {
@@ -548,6 +672,21 @@
             "properties": {}
         },
         {
+            "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
+            "apiVersion": "2018-03-01",
+            "name": "[variables('redisCacheName')]",
+            "type": "Microsoft.Cache/Redis",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "enableNonSslPort": "[variables('redisenableNonSslPort')]",
+                "sku": {
+                    "capacity": "[variables('redisCacheCapacity')]",
+                    "family": "[variables('redisCacheFamily')]",
+                    "name": "[variables('redisCacheSKU')]"
+                }
+            }
+        },
+        {
             "name": "[concat('pid-', toLower(variables('providerID')))]",
             "apiVersion": "2017-05-10",
             "type": "Microsoft.Resources/deployments",
@@ -563,7 +702,7 @@
     ],
     "outputs": {
         "dashboardlocation": {
-            "value": "[concat('https://',reference(variables('publicIPAddressNameMachine')).ipAddress)]",
+            "value": "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'),concat('https://',reference(variables('publicIPAddressNameMachine')).ipAddress), 'No Public IP Selected')]",
             "type": "string"
         }
     }
