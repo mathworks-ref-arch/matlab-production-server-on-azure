@@ -145,7 +145,7 @@ Deploying this reference architecture will create several resources in your
 resource group.
 
 
-![Cluster Architecture](/releases/R2019a/images/FinalArchitecture60.png?raw=true)
+![Cluster Architecture](/releases/R2019a/images/mps-ref-arch-azure-architecture-diagram.png?raw=true)
 
 *Architecture on Azure*
 
@@ -156,10 +156,10 @@ resource group.
 | MATLAB Production Server Cloud Console public IP                           | `servermachine-public-ip` | 1                   | Public IP address to connect to MATLAB Production Server Cloud Console.<p>**NOTE**: Provides HTTPS endpoint to the cloud console for managing server instances.</p>                                                                                                                                                                                                                                                            |
 | Virtual machine scale set                                                  | `vmss<uniqueID>`        | 1                   | Manages the number of identical VMs to be deployed. Each VM runs an instance of MATLAB Production Server which in turn runs multiple MATLAB workers.                                                                                                                                                                               |
 | Application gateway                                                        | `vmss<uniqueID>-agw`    | 1                   | Provides routing and load balancing service to MATLAB Production Server instances. The MATLAB Production Server Cloud Console retrieves the HTTP/HTTPS endpoint for making requests to the server from the application gateway resource.<p>**NOTE**: Provides HTTPS endpoint to the server for making requests.</p>                                                                                           |
-| Storage account                                                            | `serverlog<uniqueID>`   | NA                  | Storage account where logs for the reference architecture are stored. The server logs are stored in an Azure Table.                                                                                                                                                                                                  |
+| Storage account                                                            | `serverlog<uniqueID>`   | NA                  | Storage account where the deployable archives (`.ctf` files) created by MATLAB® Compiler SDK™ will be stored. The deployable archives (`.ctf` files) will be stored in a file share.                                                                                                                                                                                                  |
 | Virtual network                                                            | `vmss<uniqueID>-vnet`   | 1                   | Enables resources to communicate with each other.                                                                                                                                                                                                                                                                                  |
 | Azure Cache for Redis |  `vmss<uniqueID>redis` | 1 | Enables caching of data between calls to MATLAB code running on a server instance. |
-
+| Application Insights |  `logs-apmservice` | 1 | Enables storing and viewing of all logs associated with deployment. |
 
 # FAQ
 ## How do I use an existing virtual network to deploy MATLAB Production Server?

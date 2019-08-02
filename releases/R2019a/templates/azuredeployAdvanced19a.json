@@ -55,7 +55,7 @@
             ],
             "defaultValue": "Yes",
             "metadata": {
-                "description": "Specify whether you want to use public IP addresses and make your solution available over the Internet."
+                "description": "Specify whether you want to use public IP addresses and make your solution available over the Internet"
             }
         },
         "Platform": {
@@ -105,6 +105,7 @@
                 "description": "Specify the resource group name of the virtual network"
             }
         }
+
     },
     "variables": {
         "AppGatewaySize": "Standard_v2",
@@ -125,8 +126,9 @@
         "nicName": "[concat(variables('namingInfix'), 'nic')]",
         "nicName2": "[concat(variables('namingInfix'), 'nicserv')]",
         "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
-        "virtualNetworkID": "[resourceId(parameters('ResourceGroupNameOfVirtualNetwork'), 'Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
-        "virtualNetworkResourceGroupName": "[parameters('ResourceGroupNameOfVirtualNetwork')]",
+        "ResourceGroupNameOfVirtualNetwork": "[parameters('ResourceGroupNameOfVirtualNetwork')]",
+        "virtualNetworkID": "[resourceId(variables('ResourceGroupNameOfVirtualNetwork'), 'Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+        "virtualNetworkResourceGroupName": "[variables('ResourceGroupNameOfVirtualNetwork')]",
         "appGwPublicIPAddressName": "[concat(variables('namingInfix'), '-pip')]",
         "appGwName": "[concat(variables('namingInfix'), '-agw')]",
         "appGwPublicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('appGwPublicIPAddressName'))]",
@@ -181,10 +183,20 @@
         "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
         "LinuxSKUDisk2": "mps-ref-arch-18a-v1-linux-disk2-sku",
         "LinuxOfferDisk2": "mps-ref-arch-18a-v1-linux-disk2",
-        "WindowsDisk1Version": "3.0.2",
-        "WindowsDisk2Version": "3.0.2",
-        "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
-        "LinuxDisk2Version": "3.0.2",
+        "WindowsDisk1Version": "3.1.0",
+        "WindowsDisk2Version": "3.1.0",
+        "LinuxDisk1Version": "3.1.0",
+        "LinuxDisk2Version": "3.1.0",
+        "storageAccountApiVersion": "2015-06-15",
+        "windowsScriptURL": "https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2019a/scripts/scriptScaleSet.ps1",
+        "linuxScriptURL": "https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2019a/scripts/scriptScaleSet.sh",
+        "commandToExecuteWindows": "[concat('powershell -ExecutionPolicy Unrestricted -File scriptScaleSet.ps1 ' )]",
+        "commandToExecuteLinux": "[concat('echo hello ' )]",
+        "AppInsights-AppType": "Node.JS",
+        "AppInsights-requestSource": "rest",
+        "myAppInsightsInstanceName": "logs-apmservice",
+        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '81a9662b-bebf-436f-a333-f67b29880f12')]",
+        "RBACResourceName": "[concat(variables('storageAccountName'),'/Microsoft.Authorization/','test1233')]",
         "providerID": "D36A3EDC-0566-4EE4-86D3-64F20D2DDA06",
         "tagsForAll": {
             "provider": "[variables('providerID')]"
@@ -372,6 +384,9 @@
                 "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
             ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "location": "[resourceGroup().location]",
             "properties": {
                 "hardwareProfile": {
@@ -434,7 +449,7 @@
                             ]
                         },
                         "protectedSettings": {
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File initScript.ps1 -storageAccountName ' ,variables('storageAccountName'), ' -storageAccountKey ', listKeys(variables('storageAccountName'), '2016-12-01').keys[0].value , ' -mpsEndPoint ', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://',reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://',parameters('AvailableSubnet2IPAddress'),':444')) , ' -CIDRRange ', reference(variables('subnetRef'), variables('virtualNetworkApiVersion')).addressPrefix, ' -cloudPlatform Azure ', ' -osPlatform ', parameters('Platform') )]"
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File initScript.ps1 -storageAccountName ' ,variables('storageAccountName'), ' -storageAccountKey ', 'empty' , ' -mpsEndPoint ', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://',reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://',variables('appGWprivateIP'),':444')) , ' -CIDRRange ', reference(variables('subnetRef'), variables('virtualNetworkApiVersion')).addressPrefix, ' -cloudPlatform Azure ', ' -osPlatform ', parameters('Platform'), ' -ikey ', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2015-05-01').InstrumentationKey, ' -resourceGroup ', resourceGroup().name, ' -subscriptionID ', subscription().subscriptionId )]"
                         }
                     }
                 }
@@ -542,7 +557,7 @@
                         "properties": {
                             "Port": "[variables('mpsHttpPortVar')]",
                             "Protocol": "Http",
-                            "requestTimeout": 110,
+                            "requestTimeout": 300,
                             "CookieBasedAffinity": "Enabled",
                             "probe": {
                                 "id": "[concat(variables('appGwID'),'/probes/mpsfileprobe')]"
@@ -619,6 +634,9 @@
             "name": "[variables('namingInfix')]",
             "location": "[resourceGroup().location]",
             "apiVersion": "2018-10-01",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
                 "[concat('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
@@ -687,6 +705,28 @@
                                 }
                             }
                         ]
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "name": "[concat(variables('vmssName'), 'SetEnvironmentVar')]",
+                                "properties": {
+                                    "publisher": "[if(equals(parameters('Platform'), 'Windows'), 'Microsoft.Compute', 'Microsoft.Azure.Extensions')]",
+                                    "forceUpdateTag": "1",
+                                    "type": "[if(equals(parameters('Platform'), 'Windows'), 'CustomScriptExtension', 'CustomScript')]",
+                                    "typeHandlerVersion": "[if(equals(parameters('Platform'), 'Windows'), '1.9', '2.0')]",
+                                    "autoUpgradeMinorVersion": true,
+                                    "settings": {
+                                        "fileUris": [
+                                            "[if(equals(parameters('Platform'), 'Windows'), variables('windowsScriptURL'), variables('linuxScriptURL'))]"
+                                        ]
+                                    },
+                                    "protectedSettings": {
+                                        "commandToExecute": "[if(equals(parameters('Platform'), 'Windows'), variables('commandToExecuteWindows'), variables('commandToExecuteLinux'))]"
+                                    }
+                                }
+                            }
+                        ]
                     }
                 }
             }
@@ -722,6 +762,47 @@
             }
         },
         {
+            "type": "microsoft.insights/components",
+            "apiVersion": "2015-05-01",
+            "name": "[variables('myAppInsightsInstanceName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "ApplicationId": "[variables('myAppInsightsInstanceName')]",
+                "Application_Type": "[variables('AppInsights-AppType')]",
+                "Flow_Type": "Redfield",
+                "Request_Source": "[variables('AppInsights-requestSource')]"
+            }
+        },
+
+        {
+            "apiVersion": "2016-07-01",
+            "name": "[concat(variables('storageAccountName'),'/Microsoft.Authorization/',guid(resourceGroup().id, deployment().name,'12'))]",
+            "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+            "properties": {
+                "roleDefinitionId": "[variables('contributor')]",
+                "principalId": "[reference(concat(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')),'/providers/Microsoft.ManagedIdentity/Identities/default'),'2015-08-31-PREVIEW').principalId]",
+                "scope": "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
+            ]
+        },
+        {
+            "apiVersion": "2016-07-01",
+            "name": "[concat(variables('storageAccountName'),'/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name,'16'))]",
+            "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+            "properties": {
+                "roleDefinitionId": "[variables('contributor')]",
+                "principalId": "[reference(concat(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')),'/providers/Microsoft.ManagedIdentity/Identities/default'),'2015-08-31-PREVIEW').principalId]",
+                "scope": "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
+            ]
+        },
+        {
             "name": "[concat('pid-', toLower(variables('providerID')))]",
             "apiVersion": "2017-05-10",
             "type": "Microsoft.Resources/deployments",
@@ -738,6 +819,10 @@
     "outputs": {
         "dashboardlocation": {
             "value": "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'),concat('https://',reference(variables('publicIPAddressNameMachine')).ipAddress), 'No Public IP Selected')]",
+            "type": "string"
+        },
+        "mpsEndPoint": {
+            "value": "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://',reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://',variables('appGWprivateIP'),':444'))]",
             "type": "string"
         }
     }
