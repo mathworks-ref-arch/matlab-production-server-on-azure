@@ -11,14 +11,14 @@
       },
       "Server VM Instance Size": {
         "type": "string",
-        "defaultValue": "Standard_D2s_v3",
+        "defaultValue": "Standard_D4s_v3",
         "metadata": {
           "description": "Each VM instance will run multiple workers. Select a VM size that is appropriate for your needs. It is recommended that you choose a VM size where the number of cores on your VM match the number of workers per VM you plan on using."
         }
       },
       "instanceCount": {
         "type": "int",
-        "defaultValue": 1,
+        "defaultValue": 2,
         "metadata": {
           "description": "Number of VM instances (24 or less)."
         },
