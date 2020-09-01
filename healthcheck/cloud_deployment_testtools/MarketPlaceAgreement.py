@@ -3,7 +3,7 @@ from azure.mgmt.marketplaceordering import MarketplaceOrderingAgreements
 def market_place_agreement(ref_arch_name, credentials, subscription_id):
     publisher = 'mathworks-inc'
     marketplace_ordering = MarketplaceOrderingAgreements(credentials, subscription_id)
-    ref_arch_name == 'matlab-production-server-on-azure' :
+    ref_arch_name == 'matlab-production-server-on-azure'
     # Get sku details.
     offer1 = 'matlab-production-server-byol-windows'
     sku1 = 'matlab-production-server-byol-windows'
