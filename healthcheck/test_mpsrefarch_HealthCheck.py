@@ -57,4 +57,4 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
     DeployOp.delete_resourcegroup(credentials, subscription_id, resource_group_name)
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]. sys.argv[6], sys.argv[7])
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])
