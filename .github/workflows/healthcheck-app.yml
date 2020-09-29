@@ -32,5 +32,5 @@ jobs:
     - name: MPS ref Arch Health check test
       run: |
         cd healthcheck
-        python test_mpsrefarch_HealthCheck.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }}
+        python test_mpsrefarch_HealthCheck.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }} ${{ secrets.username }} ${{ secrets.password }} ${{ secrets.ipaddress }}
 

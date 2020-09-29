@@ -10,7 +10,7 @@ import cloud_deployment_testtools.deploy as DeployOp
 
 from datetime import date
 
-def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg):
+def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress):
     # Reference architectures in production.
     ref_arch_name = 'matlab-production-server-on-azure'
 
@@ -21,13 +21,10 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg):
     credentials = AzureAuth.authenticate_client_key(tenant_id, client_id, client_secret)
     subscription_id = subscription_id_arg
 
-    username = "mpscloudqe"
-    password = "Mathworks1984!"
-
     parameters = {
         "adminUsername": username,
         "adminPassword": password,
-        "Allow connections from": "0.0.0.0/0",
+        "Allow connections from": ipAddress,
         "Platform": "Linux"
     }
 
@@ -60,4 +57,4 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg):
     DeployOp.delete_resourcegroup(credentials, subscription_id, resource_group_name)
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]. sys.argv[6], sys.argv[7])
