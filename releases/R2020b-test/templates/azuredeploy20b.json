@@ -11,14 +11,14 @@
       },
       "Server VM Instance Size": {
         "type": "string",
-        "defaultValue": "Standard_D4s_v3",
+        "defaultValue": "Standard_D2s_v3",
         "metadata": {
           "description": "Each VM instance will run multiple workers. Select a VM size that is appropriate for your needs. It is recommended that you choose a VM size where the number of cores on your VM match the number of workers per VM you plan on using."
         }
       },
       "instanceCount": {
         "type": "int",
-        "defaultValue": 2,
+        "defaultValue": 1,
         "metadata": {
           "description": "Number of VM instances (24 or less)."
         },
@@ -192,10 +192,10 @@
       "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
       "LinuxSKUDisk2": "matlab-production-server-byol-linux",
       "LinuxOfferDisk2": "matlab-production-server-byol-linux",
-      "WindowsDisk1Version": "1.0.1",
-      "WindowsDisk2Version": "1.2.0",
+      "WindowsDisk1Version": "2.0.0",
+      "WindowsDisk2Version": "2.0.0",
       "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
-      "LinuxDisk2Version": "1.0.1",
+      "LinuxDisk2Version": "2.0.0",
       "windowsScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.ps1', variables('_artifactsLocationSasToken')))]",
       "linuxScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.sh', variables('_artifactsLocationSasToken')))]",
       "masterVMScriptURL": "[uri(variables('_artifactsLocation'), concat('initMasterVM.sh', variables('_artifactsLocationSasToken')))]",
@@ -207,12 +207,11 @@
       "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '81a9662b-bebf-436f-a333-f67b29880f12')]",
       "owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
       "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
-      "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2019b/azuredeploy-existing-vnet-R2019b.json",
+      "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2020b/azuredeploy-existing-vnet-R2020b.json",
       "flex-parameters": {
         "instanceType": { "value": "Standard_D2s_v3" },
         "clientIPAddress": { "value": "[parameters('Allow connections from')]" },
-        "adminUsername": { "value": "[parameters('adminUsername')]" },
-        "adminPassword": { "value": "[parameters('adminPassword')]" },
+        "Password": { "value": "[parameters('adminPassword')]" },
         "virtualNetworkResourceID": {
           "value": "[variables('virtualNetworkID')]"
         },
