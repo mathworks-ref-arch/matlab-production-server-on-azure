@@ -4,7 +4,7 @@
 
 Before starting, you need the following:
 
--   A MATLAB® Production Server™ license. For more information, see [Configure MATLAB Production Server Licensing on the Cloud](https://www.mathworks.com/help/licensingoncloud/matlab-production-server-on-the-cloud.html). In order to configure the license in the Cloud, you will need the MAC address of the license server on the Cloud. If you deploy the Network License Manager for MATLAB with MATLAB Production Server, you can get the license server MAC address only after deploying the solution to the Cloud. For more information, see [Upload the License File](#step-3-upload-the-license-file).   
+-   A MATLAB® Production Server™ license. For more information, see [Configure MATLAB Production Server Licensing on the Cloud](https://www.mathworks.com/help/licensingoncloud/matlab-production-server-on-the-cloud.html). In order to configure the license in the Cloud, you will need the MAC address of the license server on the Cloud. If you deploy the Network License Manager for MATLAB with MATLAB Production Server, you can get the license server MAC address only after deploying the solution to the cloud. For more information, see [Upload the License File](#step-3-upload-the-license-file).   
 -   A Microsoft Azure™ account.
 
 # Costs
@@ -26,13 +26,13 @@ For information about the architecture of this solution, see [Architecture and R
 
 # Deployment Steps
 
-## Step 1. Launch the Template
+## Step 1. Launch Template
 Click the **Deploy to Azure** button to deploy resources on
     Azure. This will open the Azure Portal in your web browser.
 
  <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>
 
-> MATLAB Release: R2020a
+> MATLAB Release: R2020b
 
 
 
@@ -49,8 +49,8 @@ Provide values for parameters in the custom deployment template on the Azure Por
 | **Location**                | Choose the region to start resources in. Ensure that you select a location which supports your requested instance types. To check which services are supported in each location, see [Azure Region Services](<https://azure.microsoft.com/en-gb/regions/services/>). We recommend you use East US or East US 2. <p><em>Example:</em> East US</p>                                                                                                                                                                                                                          |
 | **Server VM Instance Size** | Specify the size of the VM you plan on using for deployment. Each MATLAB Production Server instance runs on a VM and each instance will run multiple workers. We recommend you choose a VM size where the number of cores on your VM match the number of MATLAB workers per VM you plan on using. The template defaults to: Standard_D4s_v3. This configuration has 4 vCPUs and 16 GiB of Memory. For more information, see Azure [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-general). <p><em>Example:</em> Standard_D4s_v3</p> |
 | **Instance Count**          | Number of VMs to run MATLAB Production Server instances. Each MATLAB Production Server instance runs on a VM and each instance will run multiple workers. The maximum number of MATLAB Production Server instances is limited to 24. This means only a maximum of 24 VMs can be provisioned. Therefore, your instance count cannot exceed 24. <p><em>Example:</em> 6</p><p>If you have a standard 24 worker MATLAB Production Server license and select Standard_D4s_v3 VM (4 cores) as the Server VM Instance Size, you will need 6 VMs to fully utilize the workers in your license. Therefore, your instance count will be 6.</p><p>You can always under provision the number of VMs. In which case you may end up using fewer workers than you are licensed for.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| **Admin Username**          | Specify the admin user name for all VMs. Use this user name to log in to the MATLAB Production Server dashboard. If you also deploy the network license manager, use this username to log in to the network license manager dashboard.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| **Admin Password**          | Specify the admin password for all VMs. Use this password to log in to the MATLAB Production Server dashboard. If you also deploy the network license manager, use this password to log in to the network license manager dashboard.|
+| **Admin Username**          | Specify the administrator user name for all VMs. Use this user name to log in to the MATLAB Production Server dashboard.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **Admin Password**          | Specify the administrator password for all VMs. Use this password to log in to the MATLAB Production Server dashboard. If you also deploy the network license manager, use this password to log in to the network license manager dashboard.|
 | **Allow connections from** | This is the IP address range that will be allowed to connect to the dashboard that manages the server, and the network license manager. The format for this field is IP Address/Mask. <p><em>Example</em>: </p>10.0.0.1/32 <ul><li>This is the public IP address which can be found by searching for "what is my ip address" on the web. The mask determines the number of IP addresses to include.</li><li>A mask of 32 is a single IP address.</li><li>Use a [CIDR calculator](https://www.ipaddressguide.com/cidr) if you need a range of more than one IP addresses.</li><li>You may need to contact your IT administrator to determine which address is appropriate.</li></ul></p> |
 | **Create Azure Redis Cache**| Choose whether you want to create an Azure Redis Cache service. Creating this service will allow you to use the persistence functionality of the server. Persistence provides a mechanism to cache data between calls to MATLAB code running on a server instance.|
 | **Use Public IP Addresses**| Choose 'Yes' if you want to make your solution available over the internet. <br/>If you choose 'No', the ARM template does not assign a public IP address for the VM that hosts the dashboard. To access the dashboard, you can use a different VM located in the same virtual network as the VM that hosts the dashboard.  |
@@ -66,7 +66,7 @@ Provide values for parameters in the custom deployment template on the Azure Por
 
 Click **Purchase** to begin the deployment. This can take up to 40 minutes.
 
-## Step 3. Upload the License File
+## Step 3. Upload License File
 The Network License Manager for MATLAB manages the MATLAB Production Server license file. The MATLAB Production Server deployment template provides an option to deploy the license manager or use an existing license manager. For more information about the Network License Manager for MATLAB, see [Network License Manager for MATLAB](https://github.com/mathworks-ref-arch/license-manager-for-matlab-on-azure). The following steps show how to upload the license file using the Network License Manager for MATLAB dashboard, if you have deployed the license manager during the deployment process. 
 > **Note**: You must provide a fixed license server MAC address to get a license file from the MathWorks License Center. For more information, see [Configure MATLAB Production Server Licensing on the Cloud](https://www.mathworks.com/support/cloud/configure-matlab-production-server-licensing-on-the-cloud.html).     
 1. In the Azure Portal, click **Resource
@@ -108,187 +108,6 @@ Configuring role-based access control for the dashboard is recommended. Role-bas
 
 To run applications on MATLAB Production Server, you will need to create applications using MATLAB Compiler SDK. For more information, see [Deployable Archive Creation](https://www.mathworks.com/help/mps/deployable-archive-creation.html) in the MATLAB Production Server product documentation.
 
-# Additional Information 
-
-## Delete Your Resource Group
-> **Note**: Your license file is tied to your MAC address. If you delete your
-resource group to delete your cluster, you will need to get a new license file.
-You are limited to changing your MAC address 4 times per year.
-
-You can remove the resource group and all associated cluster resources when you
-are done with them. Note that there is no undo.
-1. Login to the Azure Portal.
-2. Select the resource group containing your cluster resources.
-3. Select the Delete resource group icon to destroy all resources deployed in this group.
-4. You will be prompted to enter the name of the resource group to confirm the deletion.
-
-## Security 
-When you run MATLAB Production Server on the Cloud you get one HTTPS endpoints that uses a self-signed certificate. This is the endpoint to the application gateway that connects the server instances. This endpoint is displayed as the **MATLAB Execution Endpoint** in the **Overview** tab of the dashboard and is used to make requests to the server.
-
-For information on changing the self-signed certificate, see [Change Self-signed Certificate](#change-self-signed-certificate). 
-
-## View Logs
-1. In the Azure Portal, click **Resource groups**.
-2. Select the resource group you created for this deployment from the list.
-3. Select the resource named `logs-apmservice`.
-5. Click the **Logs** tab from the left navigation pane.
-8. Create a new query and click **Run**.
-
-To view logs generated by all the server instances, you can use the following query.
-```
-traces
-| where customDimensions.source == "prodServerInstance"
-```
-To view only the error logs generated by all server instances, you can use the following query.
-```
-traces
-| where customDimensions.source == "prodServerInstance"
-| where parse_json(message).severity == "error"
-```
-
-<!--Logs are stored in your Azure storage account and can be viewed using the Azure Storage Explorer. To view server logs:
-
-1. Download and install the Microsoft Azure Storage Explorer.
-2. Sign-on using your Azure account.
-3. Expand the storage account associated with your selected Azure subscription. The storage account name is diplayed in the View Logs section of the cloud console. 
-4. Expand Tables and view: MasterController, mpsInstances, mpsNative
-    - `MasterController`: Log of user logins, deployed archives (.ctf files), certificate changes, and user interface actions.
-    - `mpsInstances`: Log of orchestrator code for server virtual machines.
-    - `mpsNative`: Log of activity generated by the server instance.
--->
-
-## Change the Number of Virtual Machines
-To change the number of VMs:
-
-1. Log in to the Azure Portal
-1. Change the number of virtual machines in the virtual machine scale set resource (`vmss<uniqueID>`).
-
-![Scaling](/releases/R2020a/images/azureScaling.png)
-
-If you have a standard 24 worker MATLAB Production Server license and select `Standard_D4s_v3 VM` as the **Server VM Size** during setup, you will need 6 VMs to fully utilize the workers in your license.
-
-The Azure Resource Manager (ARM) template by default has the `overprovision`
-property set to `true`. This means Azure will provision more virtual machines than
-necessary for a brief period to buffer against any machines that may fail. Once
-all virtual machines are healthy, Azure will scale down to the number of virtual
-machines you specified. For more information, see [Azure Virtual Machine Scale Sets FAQs](https://releases/R2020a/docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-faq).
-
-## Change Self-signed Certificate
-You can change the self-signed certificate to the HTTPS endpoint to the application gateway. This endpoint is used to make requests to the server and is used to connect to the dashboard. 
-
-To change the self-signed certificate to the application gateway you need to complete a two step process in the Azure Portal.
-
-1.  Create a listener
-
-2.  Add a rule
-
-### Create a Listener
-<ol>
-<li>In the resource group for the solution, select the application gateway
-    resource with the name <code>vmss&lt;uniqueID&gt;-agw</code>.</li>
-
-<li>Select <strong>Listeners</strong> from the navigation pane on the left and click
-    <strong>+Add listener</strong> from the top navigation pane.</li>
-
-<li>Enter parameter values:
-
-<table>
-<tbody>
-<tr>
-<td width="312">
-<p><strong>Listener name</strong></p>
-</td>
-<td width="312">
-<p><strong>Value</strong></p>
-</td>
-</tr>
-<tr>
-<td width="312">
-<p>Name</p>
-</td>
-<td width="312">
-<p>Enter a name for the listener.</p>
-</td>
-</tr>
-<tr>
-<td width="312">
-<p>Frontend IP configuration</p>
-</td>
-<td width="312">
-<p>Choose <code>Public</code> if your solution uses public IPs; otherwise, choose <code>Private</code>.</p>
-</td>
-</tr>
-<tr>
-<td width="312">
-<p>Port</p>
-</td>
-<td width="312">
-<p>Enter any free port between 8001 - 10000.</p>
-</td>
-</tr>
-<tr>
-<td width="312">
-<p>Protocol</p>
-</td>
-<td width="312">
-<p>Select <code>HTTPS</code>.</p>
-</td>
-</tr>
-</tbody>
-</table>
-
-<li>Select <strong>Create New</strong> in <strong>Choose a Certificate</strong>, then select <strong>Upload a certificate</strong>.</li>
-
-<li>Upload a PFX certificate, give it a name, and create a password.
-    Click <strong>OK</strong>.</li>
-</ol>
-
-
-### Add a Rule
-1. In the resource group for the solution, select the application gateway resource with the name <code>vmss&lt;uniqueID&gt;-agw</code>.
-2. Select <strong>Rules</strong> from the navigation pane on the left and click <strong>+Request routing rule</strong> from the top navigation pane.
-3. In the <strong>Rule name</strong> text box, enter a name to identify the rule.
-4. In the <strong>Listener</strong> dropdown, select the listener that you created in [Create a Listener](#create-a-listener).
-5. Enter the following parameter values for <strong>Backend targets</strong>:
-</ol>
-<table>
-<tbody>
-<tr>
-<td width="312">
-<p><strong>Parameter name</strong></p>
-</td>
-<td width="312">
-<p><strong>Value</strong></p>
-</td>
-</tr>
-<tr>
-<td width="312">
-<p>Target type</p>
-</td>
-<td width="312">
-<p>Select <code>Backend pool</code>.</p>
-</td>
-</tr>
-<tr>
-<td width="312">
-<p>Backend target</p>
-</td>
-<td width="312">
-<p>Select <code>vmss1&lt;uniqueID&gt;pool</code>.</p>
-</td>
-</tr>
-<tr>
-<td width="312">
-<p>HTTPS settings</p>
-</td>
-<td width="312">
-<p>Select <code>appGwBackendMPSHttpSettings</code>.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Click <strong>Add</strong>.</p>
-
 # Architecture and Resources
 Deploying this reference architecture will create several resources in your
 resource group.
@@ -324,9 +143,9 @@ In addition to the parameters specified in the section [Configure Cloud Resource
 ## How do I launch a template that uses a previous MATLAB release?
 | Release | Windows Server 2016 VM                                                                                                                                                                                                                                                                         | Ubuntu 16.04 VM                                                                                                                                                                                                                                                                    |
 |---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R2020a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2018b%2520and%2520older%2Ftemplates%2FazuredeployWindows18b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2018b%2520and%2520older%2Ftemplates%2FazuredeployLinux18b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
 | R2019b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019b%2Ftemplates%2FazuredeployBasic19b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019b%2Ftemplates%2FazuredeployBasic19b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
 | R2019a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
-| R2018b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2018b%2520and%2520older%2Ftemplates%2FazuredeployWindows18b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2018b%2520and%2520older%2Ftemplates%2FazuredeployLinux18b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
 
 
 For more information, see [previous releases](/releases).
@@ -334,12 +153,12 @@ For more information, see [previous releases](/releases).
 
 ## What versions of MATLAB Runtime are supported?
 
-| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | 
-|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
-| MATLAB R2018b |  | R2016a | R2016b | R2017a | R2017b | R2018a | R2018b |  |  | |
-| MATLAB R2019a |  |  | R2016b | R2017a | R2017b | R2018a | R2018b | R2019a |  | |
-| MATLAB R2019b |  |  |  | R2017a | R2017b | R2018a | R2018b | R2019a | R2019b | |
-| MATLAB R2020a |  |  |  | | R2017b | R2018a | R2018b | R2019a | R2019b | R2020a |
+| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | 
+|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
+| MATLAB R2019a | R2016b | R2017a | R2017b | R2018a | R2018b | R2019a |
+| MATLAB R2019b |  | R2017a | R2017b | R2018a | R2018b | R2019a | R2019b |
+| MATLAB R2020a |  |  | R2017b | R2018a | R2018b | R2019a | R2019b | R2020a |
+| MATLAB R2020b |  |  |  | R2018a | R2018b | R2019a | R2019b | R2020a | R2020b |
 
 
 
@@ -351,7 +170,7 @@ certificate.
 If you are making an AJAX request to the server, make sure that CORS is enabled in the server configuration. You can enable CORS by editing the property `--cors-allowed-origins` in the config file. For more information, see [Edit the Server Configuration](http://www.mathworks.com/help/mps/server/use-matlab-production-server-cloud-dashboard-on-azure-reference-architecture.html#mw_d9c9b367-376f-4b31-a97e-ed894abfcbbe).
 
 Also, some HTTP libraries and Javascript AJAX calls will reject a request originating from a server that uses a self-signed certificate. You may need to manually override the default security behavior of the client application. Or you can add a new 
-HTTP/HTTPS endpoint to the application gateway. For more information, see [Create a Listener](#create-a-listener). 
+HTTP/HTTPS endpoint to the application gateway. For more information, see [Create a Listener](https://www.mathworks.com/help/mps/server/configure-azure-resources-reference-architecture.html#mw_6ae700e7-b895-4e90-b0fb-7292e905656e_sep_mw_f755bf28-d8cf-4c0e-ba42-10818ed943e6). 
 
 # Enhancement Request
 Provide suggestions for additional features or capabilities using the following link: 
