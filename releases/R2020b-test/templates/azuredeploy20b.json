@@ -192,7 +192,7 @@
       "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
       "LinuxSKUDisk2": "matlab-production-server-byol-linux",
       "LinuxOfferDisk2": "matlab-production-server-byol-linux",
-      "WindowsDisk1Version": "2.0.0",
+      "WindowsDisk1Version": "2.0.1",
       "WindowsDisk2Version": "2.0.0",
       "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
       "LinuxDisk2Version": "2.0.0",
