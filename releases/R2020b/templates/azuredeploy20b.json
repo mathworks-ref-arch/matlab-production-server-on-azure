@@ -217,7 +217,7 @@
         },
         "subnetName": { "value": "[variables('subnetName')]" }
       },
-      "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2020a/scripts/",
+      "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2020b/scripts/",
       "_artifactsLocationSasToken":"",
       "offerType": "BYOL",
       "providerID": "D36A3EDC-0566-4EE4-86D3-64F20D2DDA06"
