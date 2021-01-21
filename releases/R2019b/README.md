@@ -36,9 +36,6 @@ Click the **Deploy to Azure** button to deploy resources on
 
 
 
-For other releases, see [How do I launch a template that uses a previous MATLAB release?](#how-do-i-launch-a-template-that-uses-a-previous-matlab-release)
-<p><strong>Note:</strong> Creating resources on Azure can take at least 30 minutes.</p>
-
 ## Step 2. Configure Cloud Resources
 Provide values for parameters in the custom deployment template on the Azure Portal :
 
@@ -189,16 +186,6 @@ You will also need to open the following ports in your virtual network:
 | `27000`, `50115` | Required for communication between network license manager and the workers. |
 | `65200` - `65535` | Required for the Azure application gateway health check to work. These ports need to be accessible over the internet. For more information, see [MSDN Community](https://social.msdn.microsoft.com/Forums/azure/en-US/96a77f18-3b71-45d2-a213-c4ba63fd4e63/internal-application-gateway-backend-health-is-unkown?forum=WAVirtualMachinesVirtualNetwork). |
 | `3389` | Required for Remote Desktop functionality. This can be used for troubleshooting and debugging. |
-
-## How do I launch a template that uses a previous MATLAB release?
-| Release | Windows Server 2016 VM                                                                                                                                                                                                                                                                         | Ubuntu 16.04 VM                                                                                                                                                                                                                                                                    |
-|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| R2019a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
-| R2018b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2018b%2520and%2520older%2Ftemplates%2FazuredeployWindows18b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2018b%2520and%2520older%2Ftemplates%2FazuredeployLinux18b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
-| R2018a  | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2018b%2520and%2520older%2Ftemplates%2FazuredeployWindows18a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>           | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2018b%2520and%2520older%2Ftemplates%2FazuredeployLinux18a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
-
-For more information, see [previous releases](/releases).
-
 
 ## What versions of MATLAB Runtime are supported?
 
