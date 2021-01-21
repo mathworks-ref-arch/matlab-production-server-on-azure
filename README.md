@@ -74,7 +74,7 @@ The Network License Manager for MATLAB manages the MATLAB Production Server lice
 1. Select **Deployments** from the left pane. In the pane that opens, click **Microsoft.Template**.
 1. Select **Outputs** from the left pane. 
 1. Copy the parameter value for **networkLicenseManagerURL** and paste it in a browser.
-1. Log in using the administrator user name and password that you specified in the [Configure Cloud Resources](#step-2-configure-cloud-resources) step of the deployment process.
+1. Log in using the password that you specified in the [Configure Cloud Resources](#step-2-configure-cloud-resources) step of the deployment process.
 1. Follow the instructions in the Network License Manager for MATLAB dashboard to upload your MATLAB Production Server license.
 
 
