@@ -4,22 +4,22 @@ WORKSPACE=/opt/mathworks
 
 # $0 is the file name
 
-storageAccountName=$1
-storageAccountKey=$2
-dbConnectionString=$3
-mpsEndpoint=$4
-CIDRRange=$5
-cloudPlatform=$6
-osPlatform=$7
-ikey=$8
-resourceGroup=$9
-subscriptionID=${10}
-userName=${11}
-passWord=${12}
-test=${13}
-redisName=${14}
-gatewayPrivateIP=${15}
-offerType=${16}
+storageAccountName="$1"
+storageAccountKey="$2"
+dbConnectionString="$3"
+mpsEndpoint="$4"
+CIDRRange="$5"
+cloudPlatform="$6"
+osPlatform="$7"
+ikey="$8"
+resourceGroup="$9"
+subscriptionID="${10}"
+userName="${11}"
+passWord="${12}"
+test="${13}"
+redisName="${14}"
+gatewayPrivateIP="${15}"
+offerType="${16}"
 
 echo $storageAccountName
 echo $storageAccountKey
@@ -64,7 +64,7 @@ echo $JSONCMD >> $destination
 echo "Written Config File successfully"
 
 cd $WORKSPACE/cloud/main
-node $WORKSPACE/cloud/main/server/hash_pw.js ${userName} ${passWord} ${passWord}
+node $WORKSPACE/cloud/main/server/hash_pw.js "${userName}" "${passWord}" "${passWord}"
 
 echo "Written sudo passwd successfully"
 
@@ -74,7 +74,7 @@ echo "Copied shadow file"
 # should we do sudo here
 systemctl restart refarchcontroller
 
-echo "restarted daemon successfullt!"
+echo "Restarted daemon successfully!"
 
 
 # chown to this user /opt/mathworks 
