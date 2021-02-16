@@ -95,9 +95,9 @@ configure and manage server instances on the Cloud. If your solution uses privat
 1.  Copy the parameter value for **dashboardURL** and paste it in a browser.  
 1.  Log in using the administrator user name and password that you specified in the [Configure Cloud Resources](#step-2-configure-cloud-resources) step of the deployment process.
 
-![MATLAB Production Server Dashboard](/releases/R2020a/images/dashboardLogin.png?raw=true) 
+![MATLAB Production Server Dashboard](/releases/R2020b/images/dashboardLogin.png?raw=true) 
 
->**Note**: The dashboard uses a self-signed certificate which can be changed. For information on changing the self-signed certificates, see [Change Self-signed Certificate](#change-self-signed-certificate). 
+>**Note**: The dashboard uses a self-signed certificate which can be changed. For information on changing the self-signed certificates, see [Change Self-signed Certificate](https://www.mathworks.com/help/mps/server/configure-azure-resources-reference-architecture.html#mw_970b25db-c92d-4e36-b459-df05b186449d). 
 
 You are now ready to use MATLAB Production Server on Azure. 
 
@@ -113,7 +113,7 @@ resource group.
 
 *Architecture on Azure*
 
-![Cluster Architecture](/releases/R2020a/images/mps-ref-arch-azure-architecture-diagram.jpg?raw=true)
+![Cluster Architecture](/releases/R2020b/images/mps-ref-arch-azure-architecture-diagram.jpg?raw=true)
 
 ### Resources
 | Resource Name                                                              | Resource Name in Azure  | Number of Resources | Description                                                                                                                                                                                                                                                                                                                        |
