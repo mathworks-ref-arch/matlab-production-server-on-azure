@@ -36,6 +36,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         f"https://github.com/mathworks-ref-arch/{ref_arch_name}/blob/master/releases/"
     )
     matlab_release = re.findall("master/releases/(R\d{4}[ab]\\b)", res.text)[-1]
+    print("Testing Health Check Release: " + matlab_release + "\n")
     github_base_dir = "https://raw.githubusercontent.com/mathworks-ref-arch"
     jsonpath = f"{matlab_release}/templates/azuredeploy{matlab_release[3:]}.json"
     template_name = f"{github_base_dir}/{ref_arch_name}/master/releases/{jsonpath}"
