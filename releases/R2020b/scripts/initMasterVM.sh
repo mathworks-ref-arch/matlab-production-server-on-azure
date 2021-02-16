@@ -21,21 +21,21 @@ redisName=${14}
 gatewayPrivateIP=${15}
 offerType=${16}
 
-echo $storageAccountName
-echo $storageAccountKey
-echo $dbConnectionString
-echo $mpsEndpoint
-echo $CIDRRange
-echo $cloudPlatform
-echo $osPlatform
-echo $ikey
-echo $resourceGroup
-echo $subscriptionID
-echo $userName
-echo $redisName
-# echo $passWord
-echo $gatewayPrivateIP
-echo $offerType
+echo "$storageAccountName"
+echo "$storageAccountKey"
+echo "$dbConnectionString"
+echo "$mpsEndpoint"
+echo "$CIDRRange"
+echo "$cloudPlatform"
+echo "$osPlatform"
+echo "$ikey"
+echo "$resourceGroup"
+echo "$subscriptionID"
+echo "$userName"
+echo "$redisName"
+# echo "$passWord"
+echo "$gatewayPrivateIP"
+echo "$offerType"
 
 JSONCMD='
 {
