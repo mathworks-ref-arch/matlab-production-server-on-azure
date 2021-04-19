@@ -4,6 +4,7 @@ import time
 import re
 import requests
 import random
+import traceback
 
 import cloud_deployment_testtools.AzureAuthentication as AzureAuth
 import cloud_deployment_testtools.deploy as DeployOp
@@ -47,16 +48,16 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         resource_group_name = "mps-refarch-health-check-" + matlab_release + date.today().strftime('%m-%d-%Y') + str(random.randint(1,101))
         ct = datetime.datetime.now()
         print("Date time before deployment of stack:-", ct)
+
         try:
-           try:
-              DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters)
-           except Exception as e:
-		      raise (e)
-		except Exception as e:
-           # delete the deployment
-           DeployOp.delete_resourcegroup(credentials, subscription_id, resource_group_name)
-           ct = datetime.datetime.now()
-           print("Date time after deployment and deletion of stack:-", ct)
+            DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters)
+        except Exception as e:
+	    traceback.print_exc()
+	
+        # delete the deployment
+        DeployOp.delete_resourcegroup(credentials, subscription_id, resource_group_name)
+        ct = datetime.datetime.now()
+        print("Date time after deployment and deletion of stack:-", ct)
 
 if __name__ == '__main__':
     main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])
