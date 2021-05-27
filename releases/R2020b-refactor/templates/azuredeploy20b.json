@@ -933,14 +933,13 @@
         }
       },
       {
-        "apiVersion": "2018-09-01-preview",
+        "apiVersion": "2016-07-01",
         "name": "[concat(variables('storageAccountName'),'/Microsoft.Authorization/',guid(resourceGroup().id, deployment().name,'12'))]",
         "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
         "properties": {
           "roleDefinitionId": "[variables('contributor')]",
           "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')),'2018-10-01', 'Full').identity.principalId]",
-          "scope": "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]",
-          "principalType": "ServicePrincipal"
+          "scope": "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]"
         },
         "dependsOn": [
           "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
@@ -948,14 +947,13 @@
         ]
       },
       {
-        "apiVersion": "2018-09-01-preview",
+        "apiVersion": "2016-07-01",
         "name": "[concat(variables('storageAccountName'),'/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name,'16'))]",
         "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
         "properties": {
           "roleDefinitionId": "[variables('contributor')]",
           "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')),'2018-10-01', 'Full').identity.principalId]",
-          "scope": "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]",
-          "principalType": "ServicePrincipal"
+          "scope": "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]"
         },
         "dependsOn": [
           "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
@@ -963,15 +961,14 @@
         ]
       },
       {
-        "apiVersion": "2018-09-01-preview",
+        "apiVersion": "2016-07-01",
         "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
         "name": "[concat(variables('redisCacheName'),'/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name,'22'))]",
         "type": "Microsoft.Cache/Redis/providers/roleAssignments",
         "properties": {
           "roleDefinitionId": "[variables('owner')]",
           "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')),'2018-10-01', 'Full').identity.principalId]",
-          "scope": "[resourceId('Microsoft.Cache/Redis',variables('redisCacheName'))]",
-          "principalType": "ServicePrincipal"
+          "scope": "[resourceId('Microsoft.Cache/Redis',variables('redisCacheName'))]"
         },
         "dependsOn": [
           "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
