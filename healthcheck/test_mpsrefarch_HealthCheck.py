@@ -4,6 +4,7 @@ import time
 import re
 import requests
 import random
+import traceback
 
 import cloud_deployment_testtools.AzureAuthentication as AzureAuth
 import cloud_deployment_testtools.deploy as DeployOp
@@ -51,7 +52,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         try:
             DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters)
         except Exception as e:
-            raise (e)
+            traceback.print_exc()
         # delete the deployment
         DeployOp.delete_resourcegroup(credentials, subscription_id, resource_group_name)
         ct = datetime.datetime.now()
