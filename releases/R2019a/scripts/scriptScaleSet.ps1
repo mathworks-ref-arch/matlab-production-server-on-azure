@@ -7,7 +7,6 @@
 #     [Parameter(Mandatory=$False)][string]$SERVER_MODE
 # )
 
-
 # disable automatic updates
 Echo "disabling automatic updates"
 $service = Get-WmiObject Win32_Service -Filter 'Name="wuauserv"'
@@ -47,6 +46,10 @@ Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\A
 #		Echo ($_.FullName + '\bin\win64\extractCTF.exe')
 #        Add-MpPreference -ExclusionProcess ($_.FullName + '\bin\win64\extractCTF.exe')
 #    }
+
+Stop-Service -Name Spooler -Force
+
+Set-Service -Name Spooler -StartupType Disabled
 
 # Execute reboot required for domain join
 #Restart-Computer
