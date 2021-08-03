@@ -150,7 +150,7 @@
       "KeyVaultCertificateSecretID": {
         "type": "string",
         "metadata": {
-          "description": "Secret ID of SSL certificate in KeyVault."
+          "description": "Secret ID of SSL certificate present in KeyVault."
         },
         "defaultValue": "" 
       },
@@ -164,14 +164,14 @@
       "Base64EncodedPFXCertificateData": {
         "type": "string",
         "metadata": {
-          "description": "The base64 encoded cert in PFX format."
+          "description": "Base64-encoded SSL certificate string in PFX format."
         },
         "defaultValue": "" 
       },
       "PasswordForBase64EncodedPFXCertificate": {
         "type": "securestring",
         "metadata": {
-          "description": "Password of cert PFX provided for \"Base64EncodedPFXCertificateData\"."
+          "description": "Password for Base64-encoded SSL certificate."
         },
         "defaultValue": "" 
       }
