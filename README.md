@@ -4,7 +4,11 @@
 
 Before starting, you need the following:
 
--   A MATLAB® Production Server™ license. For more information, see [Configure MATLAB Production Server Licensing on the Cloud](https://www.mathworks.com/help/licensingoncloud/matlab-production-server-on-the-cloud.html). In order to configure the license in the Cloud, you will need the MAC address of the license server on the Cloud. If you deploy the Network License Manager for MATLAB with MATLAB Production Server, you can get the license server MAC address only after deploying the solution to the cloud. For more information, see [Upload the License File](#step-3-upload-the-license-file).   
+-   A MATLAB® Production Server™ license that meets the following conditions:
+    - Current on [Software Maintenance Service (SMS)](https://www.mathworks.com/services/maintenance.html).  
+    - Linked to a [MathWorks Account](https://www.mathworks.com/mwaccount/).
+    - Concurrent license type. To check your license type, see [MathWorks License Center](https://www.mathworks.com/licensecenter/). 
+    - Configured to use a network license manager on the virtual network. By default, the deployment of MATLAB Production Server includes a network license manager, but you can also use an existing license manager. In either case, activate or move the license after deployment. For details, see [Configure MATLAB Production Server Licensing on the Cloud](https://www.mathworks.com/help/licensingoncloud/matlab-production-server-on-the-cloud.html).   
 -   A Microsoft Azure™ account.
 
 # Costs
@@ -32,7 +36,7 @@ Click the **Deploy to Azure** button to deploy resources on
 
  <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020b%2Ftemplates%2Fazuredeploy20b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>
 
-> MATLAB Release: R2020b
+> MATLAB Release: R2021a
 
 
 For other releases, see [How do I launch a template that uses a previous MATLAB release?](#how-do-i-launch-a-template-that-uses-a-previous-matlab-release)
@@ -62,42 +66,39 @@ Provide values for parameters in the custom deployment template on the Azure Por
 | **Subnet 2 CIDR Range** | Specify the IP address range of the second subnet in CIDR notation or use the default value. The second subnet hosts the application gateway. |
 | **Available Subnet 2 IP Address** |   Specify an unused IP address from Subnet 2 or use the default value. This IP address serves as the private IP of the application gateway. |
 | **Resource Group Name Of Virtual Network** |   Specify the resource group name of the virtual network or use the default value.    |
+| **Certificate Input Type** |   Specify an SSL certificate for the Azure application gateway to use. The application gateway provides an HTTPS endpoint that you use to connect to server instances and the MATLAB Production Server dashboard.<br/>The deployment template provides an option to use either an SSL certificate that already exists in the Azure KeyVault or specify a string that is a base64-encoded value of an SSL certificate that is in PFX format. <br/><br/>Prerequisites for using the KeyVault:<br/><ul><li>KeyVault with an SSL certificate. For information about creating a KeyVault and adding a certificate, see [Azure documentation](https://docs.microsoft.com/en-us/azure/key-vault/certificates/quick-create-portal). <br/>Record the secret ID of the certificate. You will need to enter it in the MATLAB Production Server deployment template.</li><li>User-assigned managed identity in Azure that has permission to access the KeyVault. For details on creating a managed identity, see [Azure documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-manage-ua-identity-portal#create-a-user-assigned-managed-identity).<br/>Record the resource ID of the managed identity that you create. You will need to enter it in the MATLAB Production Server deployment template.<br/>Grant your managed identity access to the KeyVault. To do so, navigate to the KeyVault you created earlier and add a role assignment that has at least read access to the KeyVault. For details on adding a role assignment, see [Azure documentation](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=current#step-2-open-the-add-role-assignment-pane).</li></ul><br/>Select if you will use a certificate from the Azure KeyVault or enter a base64-encoded PFX certificate string. <br/><br/>If you select KeyVault, enter values for **Managed Identity Resource ID for KeyVault** and **Secret ID of Certificate in KeyVault**.<br/><br/>If you select Base-64 encoded PFX Certificate, enter values for **Base64-encoded PFX Certificate Data** and **Password for Base64-encoded PFX Certificate**.|
+| **Secret ID of Certificate in KeyVault** |   Enter the secret ID of the SSL certificate present in the KeyVault.    |
+| **Managed Identity Resource ID for KeyVault** |   Enter the resource ID of the managed identity that has permission to access the KeyVault.    |
+| **Base64Encoded PFX Certificate Data** |   Enter a string that is a base64-encoded value of an SSL certificate in PFX format.    |
+| **Password for Base64-encoded PFX Certificate** |   If the certificate requires a password, enter it here. Otherwise, leave the field blank.    |
 
 Click **Purchase** to begin the deployment. This can take up to 40 minutes.
 
 ## Step 3. Upload License File
-The Network License Manager for MATLAB manages the MATLAB Production Server license file. The MATLAB Production Server deployment template provides an option to deploy the license manager or use an existing license manager. For more information about the Network License Manager for MATLAB, see [Network License Manager for MATLAB](https://github.com/mathworks-ref-arch/license-manager-for-matlab-on-azure). The following steps show how to upload the license file using the Network License Manager for MATLAB dashboard, if you have deployed the license manager during the deployment process. 
-> **Note**: You must provide a fixed license server MAC address to get a license file from the MathWorks License Center. For more information, see [Configure MATLAB Production Server Licensing on the Cloud](https://www.mathworks.com/support/cloud/configure-matlab-production-server-licensing-on-the-cloud.html).     
+The Network License Manager for MATLAB manages the MATLAB Production Server license file. The MATLAB Production Server deployment template provides an option to deploy the license manager or use an existing license manager. For more information about the Network License Manager for MATLAB, see [Network License Manager for MATLAB](https://github.com/mathworks-ref-arch/license-manager-for-matlab-on-azure). The following steps show how to upload the license file using the Network License Manager for MATLAB dashboard: 
+> **Note**: You must provide a fixed license server MAC address to get a license file from the MathWorks License Center. For more information, see [Configure MATLAB Production Server Licensing on the Cloud](https://www.mathworks.com/help/licensingoncloud/matlab-production-server-on-the-cloud.html).     
 1. In the Azure Portal, click **Resource
-    groups**. This will display all your resource groups.
-1. Select the resource group containing your cluster resources.
-1. Select **Deployments** from the left pane. In the pane that opens, click **Microsoft.Template**.
-1. Select **Outputs** from the left pane. 
-1. Copy the parameter value for **networkLicenseManagerURL** and paste it in a browser.
+    groups** and select the resource group containing your cluster resources.
+1. Select **Deployments** from the left pane and click **Microsoft.Template**.
+1. Click **Outputs**. Copy the parameter value for **networkLicenseManagerURL** and paste it in a browser.
 1. Log in using the password that you specified in the [Configure Cloud Resources](#step-2-configure-cloud-resources) step of the deployment process.
 1. Follow the instructions in the Network License Manager for MATLAB dashboard to upload your MATLAB Production Server license.
 
 
 ## Step 4. Connect and Log In to the Dashboard
 The MALAB Production Server dashboard provides a web-based interface to
-configure and manage server instances on the Cloud. If your solution uses private IP addresses, you can connect to the dashboard from a VM that belongs to the same virtual network as the VM that hosts the dashboard.
+configure and manage server instances on the cloud. If your solution uses private IP addresses, you can connect to the dashboard from a VM that belongs to the same virtual network as the VM that hosts the dashboard.
 >   **Note:** Complete these steps only after your resource group has been successfully created.
 
 > **Note:** The Internet Explorer web browser is not supported for interacting with the dashboard. 
 
 1.  In the Azure Portal, click **Resource
-    groups**. This will display all your resource groups.
-1.  Select the resource group you created for this deployment from the list. This
-    will display the Azure blade of the selected resource group with its own
-    navigation panel on the left.
-1.  Select **Deployments** from the left pane. In the pane that opens, click **Microsoft.Template**.
-1.  Select **Outputs** from the left pane.
-1.  Copy the parameter value for **dashboardURL** and paste it in a browser.  
+    groups** and select the resource group you created for this deployment from the list.
+1.  Select **Deployments** from the left pane and click **Microsoft.Template**.
+1.  Click **Outputs** from the left pane. Copy the parameter value for **dashboardURL** and paste it in a browser.  
 1.  Log in using the administrator user name and password that you specified in the [Configure Cloud Resources](#step-2-configure-cloud-resources) step of the deployment process.
 
 ![MATLAB Production Server Dashboard](/releases/R2020b/images/dashboardLogin.png?raw=true) 
-
->**Note**: The dashboard uses a self-signed certificate which can be changed. For information on changing the self-signed certificates, see [Change Self-signed Certificate](https://www.mathworks.com/help/mps/server/configure-azure-resources-reference-architecture.html#mw_970b25db-c92d-4e36-b459-df05b186449d). 
 
 You are now ready to use MATLAB Production Server on Azure. 
 
@@ -142,6 +143,7 @@ In addition to the parameters specified in the section [Configure Cloud Resource
 ## How do I launch a template that uses a previous MATLAB release?
 | Release | Windows Server VM                                                                                                                                                                                                                                                                         | Ubuntu VM                                                                                                                                                                                                                                                                    |
 |---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R2020b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
 | R2020a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
 | R2019b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019b%2Ftemplates%2FazuredeployBasic19b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019b%2Ftemplates%2FazuredeployBasic19b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
 | R2019a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
@@ -152,12 +154,13 @@ For more information, see [previous releases](/releases).
 
 ## What versions of MATLAB Runtime are supported?
 
-| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | 
-|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
+| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime|
+|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
 | MATLAB R2019a | R2016b | R2017a | R2017b | R2018a | R2018b | R2019a |
 | MATLAB R2019b |  | R2017a | R2017b | R2018a | R2018b | R2019a | R2019b |
 | MATLAB R2020a |  |  | R2017b | R2018a | R2018b | R2019a | R2019b | R2020a |
 | MATLAB R2020b |  |  |  | R2018a | R2018b | R2019a | R2019b | R2020a | R2020b |
+| MATLAB R2021a |  |  |  |  | R2018b | R2019a | R2019b | R2020a | R2020b |R2021a |
 
 
 
