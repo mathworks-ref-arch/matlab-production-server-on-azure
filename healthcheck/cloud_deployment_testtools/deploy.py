@@ -33,7 +33,7 @@ def deploy_production_template(credentials,
 
     resource_client = getResourceClient.get_resource_client(credentials, subscription_id)
 
-    # Create resource group.
+    # Create resource group...
     resource_client.resource_groups.create_or_update(
         resource_group_name,
         {'location': location}
