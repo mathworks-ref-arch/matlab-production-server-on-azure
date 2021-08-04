@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
       "location": {
@@ -67,14 +67,6 @@
           "description": "Select the operating system for the server."
         }
       },
-      "DeployNetworkLicenseManagerforMATLAB": {
-        "type": "string",
-        "allowedValues": ["Yes", "No"],
-        "defaultValue": "Yes",
-        "metadata": {
-          "description": "Specify whether you want to deploy the Network License Manager for MATLAB"
-        }
-      },
       "NewOrExistingVirtualNetwork": {
         "type": "string",
         "defaultValue": "new",
@@ -138,9 +130,59 @@
         "metadata": {
           "description": "Specify the resource group name of the virtual network"
         }
+      },
+      "DeployNetworkLicenseManagerforMATLAB": {
+        "type": "string",
+        "allowedValues": ["Yes", "No"],
+        "defaultValue": "Yes",
+        "metadata": {
+          "description": "Specify whether you want to deploy the Network License Manager for MATLAB"
+        }
+      },
+      "CertificateInputType": {
+        "type": "string",
+        "metadata": {
+          "description": "Select if the Application Gateway will use an SSL certificate from the KeyVault or a base64-encoded PFX certificate string. If you select \"KeyVault\", enter values for \"ManagedIdentityResourceIDForKeyVault\" and \"KeyVaultCertificateSecretID\". If you select \"Base64-encoded PFX Certificate\", enter values for \"Base64EncodedPFXCertificateData\" and \"PasswordForBase64EncodedPFXCertificate\"."
+        },
+        "allowedValues": ["KeyVault", "Base64-encoded PFX Certificate"],
+        "defaultValue": "KeyVault"
+      },
+      "KeyVaultCertificateSecretID": {
+        "type": "string",
+        "metadata": {
+          "description": "Secret ID of SSL certificate present in KeyVault."
+        },
+        "defaultValue": "" 
+      },
+      "ManagedIdentityResourceIDForKeyVault": {
+        "type": "string",
+        "metadata": {
+          "description": "Resource ID of the managed identity that has permission to access Key Vault."
+        },
+        "defaultValue": "" 
+      },
+      "Base64EncodedPFXCertificateData": {
+        "type": "string",
+        "metadata": {
+          "description": "Base64-encoded SSL certificate string in PFX format."
+        },
+        "defaultValue": "" 
+      },
+      "PasswordForBase64EncodedPFXCertificate": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password for Base64-encoded SSL certificate."
+        },
+        "defaultValue": "" 
       }
     },
     "variables": {
+      "ManagedIdentityResourceIDForKeyVault": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[parameters('ManagedIdentityResourceIDForKeyVault')]": {}
+        }
+      },
       "AppGatewaySize": "Standard_v2",
       "AppGatewayCount": 1,
       "mpsDNSName": "[concat('mps',uniqueString( resourceGroup().id))]",
@@ -151,7 +193,6 @@
       "addressPrefix": "[parameters('VirtualNetworkCIDRRange')]",
       "subnetPrefix": "[parameters('Subnet1CIDRRange')]",
       "virtualNetworkName": "[parameters('VirtualNetworkName')]",
-      "virtualNetworkApiVersion": "2018-08-01",
       "subnetName": "[parameters('Subnet1')]",
       "subnetRef": "[resourceId(variables('ResourceGroupNameOfVirtualNetwork'),'Microsoft.Network/virtualNetworks/subnets',variables('virtualNetworkName'),variables('subnetName'))]",
       "nicName": "[concat(variables('namingInfix'), 'nic')]",
@@ -181,8 +222,6 @@
       "publicIPprop1": {
         "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNameMachine'))]"
       },
-      "frontendCertPassword": "x509",
-      "frontendCertData": "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",
       "Platform": "[parameters('Platform')]",
       "WindowsSKUDisk1": "matlab-production-server-payg-master",
       "WindowsOfferDisk1": "matlab-production-server-payg-master",
@@ -192,10 +231,10 @@
       "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
       "LinuxSKUDisk2": "matlab-production-server-byol-linux",
       "LinuxOfferDisk2": "matlab-production-server-byol-linux",
-      "WindowsDisk1Version": "2.0.1",
-      "WindowsDisk2Version": "2.0.0",
+      "WindowsDisk1Version": "3.0.3",
+      "WindowsDisk2Version": "3.0.0",
       "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
-      "LinuxDisk2Version": "2.0.0",
+      "LinuxDisk2Version": "3.0.0",
       "windowsScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.ps1', variables('_artifactsLocationSasToken')))]",
       "linuxScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.sh', variables('_artifactsLocationSasToken')))]",
       "masterVMScriptURL": "[uri(variables('_artifactsLocation'), concat('initMasterVM.sh', variables('_artifactsLocationSasToken')))]",
@@ -206,31 +245,31 @@
       "myAppInsightsInstanceName": "logs-apmservice",
       "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '81a9662b-bebf-436f-a333-f67b29880f12')]",
       "owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+      "offerType": "BYOL",
+      "providerID": "D36A3EDC-0566-4EE4-86D3-64F20D2DDA06",
       "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
-      "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2020b/azuredeploy-existing-vnet-R2020b.json",
+      "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2021a/azuredeploy-existing-vnet-R2021a.json",
       "flex-parameters": {
         "instanceType": { "value": "Standard_D2s_v3" },
         "clientIPAddress": { "value": "[parameters('Allow connections from')]" },
-        "Password": { "value": "[parameters('adminPassword')]" },
+        "adminPassword": { "value": "[parameters('adminPassword')]" },
         "virtualNetworkResourceID": {
           "value": "[variables('virtualNetworkID')]"
         },
         "subnetName": { "value": "[variables('subnetName')]" }
       },
-      "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2020b/scripts/",
-      "_artifactsLocationSasToken":"",
-      "offerType": "BYOL",
-      "providerID": "D36A3EDC-0566-4EE4-86D3-64F20D2DDA06"
+      "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2021a/scripts/",
+      "_artifactsLocationSasToken":""
     },
     "resources": [
       {
         "type": "Microsoft.Resources/deployments",
-        "condition": "[equals(variables('should-deploy-flex'), 'Yes')]",
-        "apiVersion": "2019-09-01",
         "name": "flex-lm-server",
+        "apiVersion": "2020-10-01",
+        "condition": "[equals(variables('should-deploy-flex'), 'Yes')]",
         "dependsOn": [
-          "[concat('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
-          "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]"
+          "[resourceId('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
+          "[resourceId('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]"
         ],
         "properties": {
           "mode": "Incremental",
@@ -242,9 +281,9 @@
         }
       },
       {
-        "name": "[variables('networkSecurityGroupName')]",
         "type": "Microsoft.Network/networkSecurityGroups",
-        "apiVersion": "2018-08-01",
+        "name": "[variables('networkSecurityGroupName')]",
+        "apiVersion": "2020-07-01",
         "location": "[parameters('location')]",
         "tags": {
           "Description": "Network Security Group to control access to resources",
@@ -253,48 +292,35 @@
         "properties": {
           "securityRules": [
             {
-              "name": "default-allow-mps-port443",
+              "name": "appgw-https",
               "properties": {
                 "priority": 1000,
                 "sourceAddressPrefix": "[parameters('Allow connections from')]",
                 "protocol": "Tcp",
-                "destinationPortRange": "9090",
+                "destinationPortRange": "443",
                 "access": "Allow",
                 "direction": "Inbound",
                 "sourcePortRange": "*",
-                "destinationAddressPrefix": "*"
+                "destinationAddressPrefix": "[parameters('Subnet2CIDRRange')]"
               }
             },
             {
-              "name": "default-allow-mps-port9910",
+              "name": "nlm-https",
               "properties": {
                 "priority": 1001,
                 "sourceAddressPrefix": "[parameters('Allow connections from')]",
                 "protocol": "Tcp",
-                "destinationPortRange": "*",
+                "destinationPortRange": "443",
                 "access": "Allow",
                 "direction": "Inbound",
                 "sourcePortRange": "*",
-                "destinationAddressPrefix": "*"
+                "destinationAddressPrefix": "[parameters('Subnet1CIDRRange')]"
               }
             },
             {
-              "name": "default-allow-mps-port8000",
+              "name": "rdp",
               "properties": {
                 "priority": 1002,
-                "sourceAddressPrefix": "[parameters('Allow connections from')]",
-                "protocol": "Tcp",
-                "destinationPortRange": "8000",
-                "access": "Allow",
-                "direction": "Inbound",
-                "sourcePortRange": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "default-allow-rdp",
-              "properties": {
-                "priority": 1003,
                 "sourceAddressPrefix": "[parameters('Allow connections from')]",
                 "protocol": "Tcp",
                 "destinationPortRange": "3389",
@@ -305,11 +331,24 @@
               }
             },
             {
-              "name": "default-allow-appgw-traffic",
+              "name": "ssh",
+              "properties": {
+                "priority": 1003,
+                "sourceAddressPrefix": "[parameters('Allow connections from')]",
+                "protocol": "Tcp",
+                "destinationPortRange": "22",
+                "access": "Allow",
+                "direction": "Inbound",
+                "sourcePortRange": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "appgw-required-by-azure",
               "properties": {
                 "priority": 1004,
-                "sourceAddressPrefix": "*",
-                "protocol": "*",
+                "sourceAddressPrefix": "GatewayManager",
+                "protocol": "Tcp",
                 "destinationPortRange": "65200-65535",
                 "access": "Allow",
                 "direction": "Inbound",
@@ -321,14 +360,14 @@
         }
       },
       {
-        "condition": "[equals(variables('virtualNetworkNewOrExisting'), 'new')]",
         "type": "Microsoft.Network/virtualNetworks",
         "name": "[variables('virtualNetworkName')]",
+        "apiVersion": "2020-07-01",
+        "condition": "[equals(variables('virtualNetworkNewOrExisting'), 'new')]",
         "location": "[parameters('location')]",
         "dependsOn": [
-          "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]"
+          "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]"
         ],
-        "apiVersion": "2018-08-01",
         "tags": {
           "Description": "Virtual network for the MATLAB Production Server deployment",
           "provider": "[variables('providerID')]"
@@ -360,13 +399,13 @@
         }
       },
       {
-        "condition": "[equals(parameters('UsePublicIPAddresses'), 'Yes')]",
-        "apiVersion": "2018-08-01",
         "type": "Microsoft.Network/publicIPAddresses",
+        "name": "[variables('publicIPAddressNameMachine')]",
+        "apiVersion": "2020-07-01",
+        "condition": "[equals(parameters('UsePublicIPAddresses'), 'Yes')]",
         "sku": {
           "name": "Standard"
         },
-        "name": "[variables('publicIPAddressNameMachine')]",
         "location": "[parameters('location')]",
         "tags": {
           "Description": "Public IP Address of the MATLAB Production Server Dashboard",
@@ -377,14 +416,15 @@
         }
       },
       {
-        "apiVersion": "2018-08-01",
         "type": "Microsoft.Network/networkInterfaces",
         "name": "[variables('licservernicName')]",
+        "apiVersion": "2020-07-01",
         "location": "[parameters('location')]",
         "dependsOn": [
-          "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameMachine')), concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName')))]",
-          "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
-          "[concat('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
+          "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameMachine'))]",
+          "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
+          "[resourceId('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
+          "[resourceId('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
         ],
         "tags": {
           "Description": "Network Interface Card (NIC) for the Admin VM",
@@ -414,18 +454,18 @@
         }
       },
       {
-        "apiVersion": "2018-10-01",
         "type": "Microsoft.Compute/virtualMachines",
         "name": "[variables('vmName')]",
+        "apiVersion": "2020-06-01",
         "tags": {
           "Description": "Virtual machine running the Admin Dashboard",
           "provider": "[variables('providerID')]"
         },
         "dependsOn": [
-          "[concat('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
-          "[concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
-          "[concat('Microsoft.Cache/Redis/',variables('redisCacheName'))]",
-          "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
+          "[resourceId('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
+          "[resourceId('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
+          "[resourceId('Microsoft.Cache/Redis/',variables('redisCacheName'))]",
+          "[resourceId('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
         ],
         "identity": {
           "type": "SystemAssigned"
@@ -453,7 +493,7 @@
               "version": "[if(equals(variables('Platform'), 'Windows'), variables('WindowsDisk1Version'),  variables('LinuxDisk1Version'))]"
             },
             "osDisk": {
-              "createOption": "fromImage",
+              "createOption": "FromImage",
               "managedDisk": {
                 "storageAccountType": "Standard_LRS"
               }
@@ -469,12 +509,12 @@
         },
         "resources": [
           {
-            "apiVersion": "2018-10-01",
             "type": "extensions",
             "name": "config-app",
+            "apiVersion": "2020-06-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-              "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+              "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
             ],
             "tags": {
               "displayName": "config-app",
@@ -490,7 +530,7 @@
                 "timestamp": 123456789
               },
               "protectedSettings": {
-                "commandToExecute": "[concat( 'sudo ./initMasterVM.sh ''', variables('storageAccountName'), ''' ''', listKeys(variables('storageAccountName'), '2016-12-01').keys[0].value, ''' ''', 'mydbConnection', ''' ''', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://', reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://', variables('appGWprivateIP'), ':444')), ''' ''', reference(variables('subnetRef'), variables('virtualNetworkApiVersion')).addressPrefix, ''' ''', 'Azure', ''' ''', variables('Platform'), ''' ''', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2015-05-01').InstrumentationKey, ''' ''', resourceGroup().name, ''' ''', subscription().subscriptionId, ''' ''', parameters('adminUsername'), ''' ''', parameters('adminPassword'), ''' ''', 'true', ''' ''', variables('redisCacheName'), ''' ''', concat('https://', variables('appGWprivateIP'), ':444'), ''' ''', variables('offerType'), '''' )]",
+                "commandToExecute": "[concat( 'sudo ./initMasterVM.sh ''', variables('storageAccountName'), ''' ''', listKeys(variables('storageAccountName'), '2019-06-01').keys[0].value, ''' ''', 'mydbConnection', ''' ''', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://', reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://', variables('appGWprivateIP'), ':444')), ''' ''', reference(variables('subnetRef'), '2020-07-01').addressPrefix, ''' ''', 'Azure', ''' ''', variables('Platform'), ''' ''', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2020-02-02-preview').InstrumentationKey, ''' ''', resourceGroup().name, ''' ''', subscription().subscriptionId, ''' ''', parameters('adminUsername'), ''' ''', parameters('adminPassword'), ''' ''', 'true', ''' ''', variables('redisCacheName'), ''' ''', concat('https://', variables('appGWprivateIP'), ':444'), ''' ''', variables('offerType'), '''' )]",
                 "fileUris": ["[variables('masterVMScriptURL')]"]
               }
             }
@@ -499,12 +539,12 @@
       },
       {
         "type": "Microsoft.Network/publicIPAddresses",
+        "name": "[variables('appGwPublicIPAddressName')]",
+        "apiVersion": "2020-07-01",
         "sku": {
           "name": "Standard"
         },
-        "name": "[variables('appGwPublicIPAddressName')]",
         "location": "[parameters('location')]",
-        "apiVersion": "2018-08-01",
         "properties": {
           "publicIPAllocationMethod": "Static",
           "dnsSettings": {
@@ -519,12 +559,13 @@
       {
         "type": "Microsoft.Network/applicationGateways",
         "name": "[variables('appGwName')]",
+        "apiVersion": "2020-07-01",
         "location": "[parameters('location')]",
-        "apiVersion": "2018-10-01",
         "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-          "[concat('Microsoft.Network/publicIPAddresses/', variables('appGwPublicIPAddressName'))]"
+          "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+          "[resourceId('Microsoft.Network/publicIPAddresses/', variables('appGwPublicIPAddressName'))]"
         ],
+        "identity": "[if(equals(parameters('CertificateInputType'), 'KeyVault'), variables('ManagedIdentityResourceIDForKeyVault'), json('null'))]",
         "tags": {
           "Description": "Application Gateway",
           "provider": "[variables('providerID')]"
@@ -539,8 +580,9 @@
             {
               "name": "appGatewayFrontEndSslCert",
               "properties": {
-                "data": "[variables('frontendCertData')]",
-                "password": "[variables('frontendCertPassword')]"
+                "keyVaultSecretId": "[if(equals(parameters('CertificateInputType'), 'KeyVault'), parameters('KeyVaultCertificateSecretID'), json('null'))]",
+                "data": "[if(equals(parameters('CertificateInputType'), 'Base64-encoded PFX Certificate'), parameters('Base64EncodedPFXCertificateData'), json('null'))]",
+                "password": "[if(equals(parameters('CertificateInputType'), 'Base64-encoded PFX Certificate'), parameters('PasswordForBase64EncodedPFXCertificate'), json('null'))]"
               }
             }
           ],
@@ -784,14 +826,14 @@
       {
         "type": "Microsoft.Compute/virtualMachineScaleSets",
         "name": "[variables('namingInfix')]",
+        "apiVersion": "2020-06-01",
         "location": "[parameters('location')]",
-        "apiVersion": "2018-10-01",
         "identity": {
           "type": "SystemAssigned"
         },
         "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-          "[concat('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
+          "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+          "[resourceId('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
         ],
         "tags": {
           "Description": "VM Scale set that controls how many instances are running",
@@ -837,7 +879,7 @@
                 {
                   "name": "[variables('nicName')]",
                   "properties": {
-                    "primary": "true",
+                    "primary": true,
                     "ipConfigurations": [
                       {
                         "name": "[variables('ipConfigName')]",
@@ -883,8 +925,8 @@
         }
       },
       {
-        "name": "[variables('storageAccountName')]",
         "type": "Microsoft.Storage/storageAccounts",
+        "name": "[variables('storageAccountName')]",
         "apiVersion": "2019-06-01",
         "location": "[parameters('location')]",
         "tags": {
@@ -898,14 +940,14 @@
         "properties": {}
       },
       {
-        "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
-        "apiVersion": "2019-07-01",
+        "type": "Microsoft.Cache/Redis",
         "name": "[variables('redisCacheName')]",
+        "apiVersion": "2019-07-01",
+        "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
         "tags": {
           "Description": "Azure Cache for Redis to store persistence data",
           "provider": "[variables('providerID')]"
         },
-        "type": "Microsoft.Cache/Redis",
         "location": "[parameters('location')]",
         "properties": {
           "enableNonSslPort": "[variables('redisenableNonSslPort')]",
@@ -917,13 +959,13 @@
         }
       },
       {
-        "type": "microsoft.insights/components",
-        "apiVersion": "2018-05-01-preview",
+        "type": "Microsoft.Insights/Components",
+        "name": "[variables('myAppInsightsInstanceName')]",
+        "apiVersion": "2020-02-02-preview",
         "tags": {
           "Description": "Application Insights instance that stores solution logs",
           "provider": "[variables('providerID')]"
         },
-        "name": "[variables('myAppInsightsInstanceName')]",
         "location": "[parameters('location')]",
         "properties": {
           "ApplicationId": "[variables('myAppInsightsInstanceName')]",
@@ -933,55 +975,52 @@
         }
       },
       {
-        "apiVersion": "2018-09-01-preview",
-        "name": "[concat(variables('storageAccountName'),'/Microsoft.Authorization/',guid(resourceGroup().id, deployment().name,'12'))]",
-        "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "[guid(resourceGroup().id, deployment().name,'12')]",
+        "apiVersion": "2020-04-01-preview",
+        "scope": "[concat('Microsoft.Storage/storageAccounts', '/', variables('storageAccountName'))]",
+        "dependsOn": [
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+        ],
         "properties": {
           "roleDefinitionId": "[variables('contributor')]",
-          "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')),'2018-10-01', 'Full').identity.principalId]",
-          "scope": "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]",
+          "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2020-06-01', 'Full').identity.principalId]",
           "principalType": "ServicePrincipal"
-        },
-        "dependsOn": [
-          "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
-          "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
-        ]
+        }
       },
       {
-        "apiVersion": "2018-09-01-preview",
-        "name": "[concat(variables('storageAccountName'),'/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name,'16'))]",
-        "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "[guid(resourceGroup().id, deployment().name,'16')]",
+        "apiVersion": "2020-04-01-preview",
+        "scope": "[concat('Microsoft.Storage/storageAccounts', '/', variables('storageAccountName'))]",
+        "dependsOn": [
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+        ],
         "properties": {
           "roleDefinitionId": "[variables('contributor')]",
-          "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')),'2018-10-01', 'Full').identity.principalId]",
-          "scope": "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]",
+          "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')), '2020-06-01', 'Full').identity.principalId]",
           "principalType": "ServicePrincipal"
-        },
-        "dependsOn": [
-          "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
-          "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
-        ]
+        }
       },
       {
-        "apiVersion": "2018-09-01-preview",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "[guid(resourceGroup().id, deployment().name,'22')]",
+        "apiVersion": "2020-04-01-preview",
         "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
-        "name": "[concat(variables('redisCacheName'),'/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name,'22'))]",
-        "type": "Microsoft.Cache/Redis/providers/roleAssignments",
+        "scope": "[concat('Microsoft.Cache/Redis', '/', variables('redisCacheName'))]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+          "[resourceId('Microsoft.Cache/Redis', variables('redisCacheName'))]"
+        ],
         "properties": {
           "roleDefinitionId": "[variables('owner')]",
-          "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')),'2018-10-01', 'Full').identity.principalId]",
-          "scope": "[resourceId('Microsoft.Cache/Redis',variables('redisCacheName'))]",
+          "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2020-06-01', 'Full').identity.principalId]",
           "principalType": "ServicePrincipal"
-        },
-        "dependsOn": [
-          "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
-          "[concat('Microsoft.Cache/Redis/',variables('redisCacheName'))]",
-          "[concat('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
-        ]
+        }
       },
       {
         "name": "[concat('pid-', toLower(variables('providerID')))]",
-        "apiVersion": "2019-09-01",
+        "apiVersion": "2020-10-01",
         "type": "Microsoft.Resources/deployments",
         "properties": {
           "mode": "Incremental",
@@ -994,7 +1033,11 @@
       }
     ],
     "outputs": {
-      "dashboardURL": {
+      "adminDashboardURL": {
+        "value": "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://',reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn,'/dashboard/admin'), concat('https://',variables('appGWprivateIP'),':444', '/dashboard/admin'))]",
+        "type": "string"
+      },
+      "managerAndAppAuthorDashboardURL": {
         "value": "[if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://',reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn,'/dashboard'), concat('https://',variables('appGWprivateIP'),':444', '/dashboard'))]",
         "type": "string"
       },
