@@ -54,6 +54,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         github_base_dir = "https://raw.githubusercontent.com/mathworks-ref-arch"
         jsonpath = f"{matlab_release}/templates/azuredeploy{matlab_release[3:]}.json"
         template_name = f"{github_base_dir}/{ref_arch_name}/master/releases/{jsonpath}"
+        print(template_name)
         resource_group_name = "mps-refarch-health-check-" + matlab_release + date.today().strftime('%m-%d-%Y') + str(random.randint(1,101))
         ct = datetime.datetime.now()
         print("Date time before deployment of stack:-", ct)
