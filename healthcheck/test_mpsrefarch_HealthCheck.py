@@ -63,7 +63,8 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
             if matlab_release == "R2020b":
                 DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters1)
             else:
-                DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters2)  
+                print("skipping R2021a for today")
+                #DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters2)  
         except Exception as e:
             raise (e)
         
