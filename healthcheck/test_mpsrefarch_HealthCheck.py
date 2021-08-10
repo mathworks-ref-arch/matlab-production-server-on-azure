@@ -48,8 +48,9 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
     )
     
     latest_releases = [re.findall("master/releases/(R\d{4}[ab]\\b)", res.text)[-1], re.findall("master/releases/(R\d{4}[ab]\\b)", res.text)[-2]]
-    for i in range(2):
-        matlab_release = latest_releases[i]
+    for i in range(1):
+        #matlab_release = latest_releases[i]
+        matlab_release = "R2020b"
         print("Testing Health Check Release: " + matlab_release + "\n")
         github_base_dir = "https://raw.githubusercontent.com/mathworks-ref-arch"
         jsonpath = f"{matlab_release}/templates/azuredeploy{matlab_release[3:]}.json"
