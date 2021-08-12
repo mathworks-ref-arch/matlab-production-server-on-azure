@@ -38,7 +38,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         "KeyVaultCertificateSecretID": keyVaultSecret,
         "ManagedIdentityResourceIDForKeyVault": ManagedIdentityResourceID
     }
-        
+
     location = 'eastus'
     
 
@@ -48,14 +48,12 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
     )
     
     latest_releases = [re.findall("master/releases/(R\d{4}[ab]\\b)", res.text)[-1], re.findall("master/releases/(R\d{4}[ab]\\b)", res.text)[-2]]
-    for i in range(1):
-        #matlab_release = latest_releases[i]
-        matlab_release = "R2020b"
+    for i in range(2):
+        matlab_release = latest_releases[i]
         print("Testing Health Check Release: " + matlab_release + "\n")
         github_base_dir = "https://raw.githubusercontent.com/mathworks-ref-arch"
         jsonpath = f"{matlab_release}/templates/azuredeploy{matlab_release[3:]}.json"
         template_name = f"{github_base_dir}/{ref_arch_name}/master/releases/{jsonpath}"
-        print(template_name)
         resource_group_name = "mps-refarch-health-check-" + matlab_release + date.today().strftime('%m-%d-%Y') + str(random.randint(1,101))
         ct = datetime.datetime.now()
         print("Date time before deployment of stack:-", ct)
@@ -64,11 +62,9 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
             if matlab_release == "R2020b":
                 DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters1)
             else:
-                print("skipping R2021a for today")
-                #DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters2)  
+                DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters2)
         except Exception as e:
             raise (e)
-        
         # delete the deployment
         DeployOp.delete_resourcegroup(credentials, subscription_id, resource_group_name)
         ct = datetime.datetime.now()
