@@ -22,7 +22,6 @@ def deploy_production_template(credentials,
 
     with urllib.request.urlopen(f'{template_name}') as url:
         template = json.loads(url.read().decode())
-        print(template)
 
     parameters = {k: {'value': v} for k, v in resource_group_params.items()}
 
