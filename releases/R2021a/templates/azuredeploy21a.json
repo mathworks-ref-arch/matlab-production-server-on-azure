@@ -232,7 +232,7 @@
       "LinuxSKUDisk2": "matlab-production-server-byol-linux",
       "LinuxOfferDisk2": "matlab-production-server-byol-linux",
       "WindowsDisk1Version": "3.0.3",
-      "WindowsDisk2Version": "3.0.0",
+      "WindowsDisk2Version": "3.0.1",
       "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
       "LinuxDisk2Version": "3.0.0",
       "windowsScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.ps1', variables('_artifactsLocationSasToken')))]",
@@ -246,7 +246,6 @@
       "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '81a9662b-bebf-436f-a333-f67b29880f12')]",
       "owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
       "offerType": "BYOL",
-      "providerID": "D36A3EDC-0566-4EE4-86D3-64F20D2DDA06",
       "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
       "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2021a/azuredeploy-existing-vnet-R2021a.json",
       "flex-parameters": {
@@ -286,8 +285,7 @@
         "apiVersion": "2020-07-01",
         "location": "[parameters('location')]",
         "tags": {
-          "Description": "Network Security Group to control access to resources",
-          "provider": "[variables('providerID')]"
+          "Description": "Network Security Group to control access to resources"
         },
         "properties": {
           "securityRules": [
@@ -369,8 +367,7 @@
           "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]"
         ],
         "tags": {
-          "Description": "Virtual network for the MATLAB Production Server deployment",
-          "provider": "[variables('providerID')]"
+          "Description": "Virtual network for the MATLAB Production Server deployment"
         },
         "properties": {
           "addressSpace": {
@@ -408,8 +405,7 @@
         },
         "location": "[parameters('location')]",
         "tags": {
-          "Description": "Public IP Address of the MATLAB Production Server Dashboard",
-          "provider": "[variables('providerID')]"
+          "Description": "Public IP Address of the MATLAB Production Server Dashboard"
         },
         "properties": {
           "publicIPAllocationMethod": "Static"
@@ -427,8 +423,7 @@
           "[resourceId('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
         ],
         "tags": {
-          "Description": "Network Interface Card (NIC) for the Admin VM",
-          "provider": "[variables('providerID')]"
+          "Description": "Network Interface Card (NIC) for the Admin VM"
         },
         "properties": {
           "ipConfigurations": [
@@ -458,8 +453,7 @@
         "name": "[variables('vmName')]",
         "apiVersion": "2020-06-01",
         "tags": {
-          "Description": "Virtual machine running the Admin Dashboard",
-          "provider": "[variables('providerID')]"
+          "Description": "Virtual machine running the Admin Dashboard"
         },
         "dependsOn": [
           "[resourceId('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
@@ -517,8 +511,7 @@
               "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
             ],
             "tags": {
-              "displayName": "config-app",
-              "provider": "[variables('providerID')]"
+              "displayName": "config-app"
             },
             "properties": {
               "publisher": "Microsoft.Azure.Extensions",
@@ -552,8 +545,7 @@
           }
         },
         "tags": {
-          "Description": "Application Gateway public IP",
-          "provider": "[variables('providerID')]"
+          "Description": "Application Gateway public IP"
         }
       },
       {
@@ -567,8 +559,7 @@
         ],
         "identity": "[if(equals(parameters('CertificateInputType'), 'KeyVault'), variables('ManagedIdentityResourceIDForKeyVault'), json('null'))]",
         "tags": {
-          "Description": "Application Gateway",
-          "provider": "[variables('providerID')]"
+          "Description": "Application Gateway"
         },
         "properties": {
           "sku": {
@@ -836,8 +827,7 @@
           "[resourceId('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
         ],
         "tags": {
-          "Description": "VM Scale set that controls how many instances are running",
-          "provider": "[variables('providerID')]"
+          "Description": "VM Scale set that controls how many instances are running"
         },
         "sku": {
           "name": "[parameters('Server VM Instance Size')]",
@@ -930,8 +920,7 @@
         "apiVersion": "2019-06-01",
         "location": "[parameters('location')]",
         "tags": {
-          "Description": "Storage account that stores application and config files",
-          "provider": "[variables('providerID')]"
+          "Description": "Storage account that stores application and config files"
         },
         "sku": {
           "name": "[variables('storageAccountType')]"
@@ -945,8 +934,7 @@
         "apiVersion": "2019-07-01",
         "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
         "tags": {
-          "Description": "Azure Cache for Redis to store persistence data",
-          "provider": "[variables('providerID')]"
+          "Description": "Azure Cache for Redis to store persistence data"
         },
         "location": "[parameters('location')]",
         "properties": {
@@ -963,8 +951,7 @@
         "name": "[variables('myAppInsightsInstanceName')]",
         "apiVersion": "2020-02-02-preview",
         "tags": {
-          "Description": "Application Insights instance that stores solution logs",
-          "provider": "[variables('providerID')]"
+          "Description": "Application Insights instance that stores solution logs"
         },
         "location": "[parameters('location')]",
         "properties": {
@@ -1016,19 +1003,6 @@
           "roleDefinitionId": "[variables('owner')]",
           "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2020-06-01', 'Full').identity.principalId]",
           "principalType": "ServicePrincipal"
-        }
-      },
-      {
-        "name": "[concat('pid-', toLower(variables('providerID')))]",
-        "apiVersion": "2020-10-01",
-        "type": "Microsoft.Resources/deployments",
-        "properties": {
-          "mode": "Incremental",
-          "template": {
-            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-            "contentVersion": "1.0.0.0",
-            "resources": []
-          }
         }
       }
     ],
