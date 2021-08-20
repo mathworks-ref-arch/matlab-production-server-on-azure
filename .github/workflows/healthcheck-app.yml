@@ -1,5 +1,5 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# For more information, see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: MATLAB Production Server Ref Arch Azure Health Check Test
 
@@ -32,5 +32,5 @@ jobs:
     - name: MPS ref Arch Health check test
       run: |
         cd healthcheck
-        python test_mpsrefarch_HealthCheck.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }} ${{ secrets.username }} ${{ secrets.password }} ${{ secrets.ipaddress }}
+        python test_mpsrefarch_HealthCheck.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }} ${{ secrets.username }} ${{ secrets.password }} ${{ secrets.ipaddress }} ${{ secrets.keyVaultCertificateSecretID }} ${{ secrets.managedIdentityResourceIDForKeyVault }}
 
