@@ -34,9 +34,9 @@ For information about the architecture of this solution, see [Architecture and R
 Click the **Deploy to Azure** button to deploy resources on
     Azure. This will open the Azure Portal in your web browser.
 
- <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2021a%2Ftemplates%2Fazuredeploy21a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>
+ <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2021b%2Ftemplates%2Fazuredeploy21b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>
 
-> MATLAB Release: R2021a
+> MATLAB Release: R2021b
 
 
 For other releases, see [How do I launch a template that uses a previous MATLAB release?](#how-do-i-launch-a-template-that-uses-a-previous-matlab-release)
@@ -98,7 +98,7 @@ configure and manage server instances on the cloud. If your solution uses privat
 1.  Click **Outputs** from the left pane. Copy the parameter value for **dashboardURL** and paste it in a browser.  
 1.  Log in using the administrator user name and password that you specified in the [Configure Cloud Resources](#step-2-configure-cloud-resources) step of the deployment process.
 
-![MATLAB Production Server Dashboard](/releases/R2021a/images/dashboardLogin.png?raw=true) 
+![MATLAB Production Server Dashboard](/releases/R2021b/images/dashboardLogin.png?raw=true) 
 
 You are now ready to use MATLAB Production Server on Azure. 
 
@@ -114,7 +114,7 @@ resource group.
 
 *Architecture on Azure*
 
-![Cluster Architecture](/releases/R2021a/images/mps-ref-arch-azure-architecture-diagram.jpg?raw=true)
+![Cluster Architecture](/releases/R2021b/images/mps-ref-arch-azure-architecture-diagram.jpg?raw=true)
 
 ### Resources
 | Resource Name                                                              | Resource Name in Azure  | Number of Resources | Description                                                                                                                                                                                                                                                                                                                        |
@@ -141,12 +141,14 @@ In addition to the parameters specified in the section [Configure Cloud Resource
 | `22`, `3389` | Required for Remote Desktop functionality. This can be used for troubleshooting and debugging. |
 
 ## How do I launch a template that uses a previous MATLAB release?
-| Release | Windows Server VM                                                                                                                                                                                                                                                                         | Ubuntu VM                                                                                                                                                                                                                                                                    |
-|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| R2020b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020b%2Ftemplates%2Fazuredeploy20b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020b%2Ftemplates%2Fazuredeploy20b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
-| R2020a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
-| R2019b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019b%2Ftemplates%2FazuredeployBasic19b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019b%2Ftemplates%2FazuredeployBasic19b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
-| R2019a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
+You may use one of the deploy buttons below to deploy an older release of MATLAB Production Server Reference Architecture. Note that the operating system is a parameter of the ARM template.
+| Release | Windows Server / Ubuntu                                                                                                                                                                                                                                                                         | 
+|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R2021a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2021a%2Ftemplates%2Fazuredeploy21a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> |
+| R2020b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020b%2Ftemplates%2Fazuredeploy20b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> |
+| R2020a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> |
+| R2019b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019b%2Ftemplates%2FazuredeployBasic19b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> |
+| R2019a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2019a%2Ftemplates%2FazuredeployBasic19a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> |
 
 
 For more information, see [previous releases](/releases).
@@ -160,7 +162,8 @@ For more information, see [previous releases](/releases).
 | MATLAB R2019b |  | R2017a | R2017b | R2018a | R2018b | R2019a | R2019b |
 | MATLAB R2020a |  |  | R2017b | R2018a | R2018b | R2019a | R2019b | R2020a |
 | MATLAB R2020b |  |  |  | R2018a | R2018b | R2019a | R2019b | R2020a | R2020b |
-| MATLAB R2021a |  |  |  |  | R2018b | R2019a | R2019b | R2020a | R2020b |R2021a |
+| MATLAB R2021a |  |  |  |  | R2018b | R2019a | R2019b | R2020a | R2020b | R2021a |
+| MATLAB R2021b |  |  |  |  |  | R2019a | R2019b | R2020a | R2020b |R2021a | R2021b
 
 
 
