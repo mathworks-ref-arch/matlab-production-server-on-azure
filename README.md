@@ -156,14 +156,14 @@ For more information, see [previous releases](/releases).
 
 ## What versions of MATLAB Runtime are supported?
 
-| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime|
-|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
+| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB RUNTIME |
+|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
 | MATLAB R2019a | R2016b | R2017a | R2017b | R2018a | R2018b | R2019a |
 | MATLAB R2019b |  | R2017a | R2017b | R2018a | R2018b | R2019a | R2019b |
 | MATLAB R2020a |  |  | R2017b | R2018a | R2018b | R2019a | R2019b | R2020a |
 | MATLAB R2020b |  |  |  | R2018a | R2018b | R2019a | R2019b | R2020a | R2020b |
 | MATLAB R2021a |  |  |  |  | R2018b | R2019a | R2019b | R2020a | R2020b | R2021a |
-| MATLAB R2021b |  |  |  |  |  | R2019a | R2019b | R2020a | R2020b |R2021a | R2021b
+| MATLAB R2021b |  |  |  |  |  | R2019a | R2019b | R2020a | R2020b |R2021a | R2021b |
 
 
 
