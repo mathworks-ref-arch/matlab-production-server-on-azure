@@ -20,7 +20,7 @@
         "type": "int",
         "defaultValue": 1,
         "metadata": {
-          "description": "Number of VM instances (24 or less)."
+          "description": "Number of VM instances."
         },
         "maxValue": 24,
         "minValue": 1
@@ -148,7 +148,7 @@
         "defaultValue": "KeyVault"
       },
       "KeyVaultCertificateSecretID": {
-        "type": "string",
+        "type": "securestring",
         "metadata": {
           "description": "Secret ID of SSL certificate present in KeyVault."
         },
@@ -225,14 +225,14 @@
       "Platform": "[parameters('Platform')]",
       "WindowsSKUDisk1": "matlab-production-server-payg-master",
       "WindowsOfferDisk1": "matlab-production-server-payg-master",
-      "WindowsSKUDisk2": "matlab-production-server-byol-windows",
+      "WindowsSKUDisk2": "matlab-production-server-byol-windows-21a",
       "WindowsOfferDisk2": "matlab-production-server-byol-windows",
       "LinuxSKUDisk1": "[variables('WindowsSKUDisk1')]",
       "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
       "LinuxSKUDisk2": "matlab-production-server-byol-linux",
       "LinuxOfferDisk2": "matlab-production-server-byol-linux",
       "WindowsDisk1Version": "3.0.3",
-      "WindowsDisk2Version": "3.0.1",
+      "WindowsDisk2Version": "1.0.0",
       "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
       "LinuxDisk2Version": "3.0.0",
       "windowsScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.ps1', variables('_artifactsLocationSasToken')))]",
@@ -243,8 +243,8 @@
       "AppInsights-AppType": "Node.JS",
       "AppInsights-requestSource": "rest",
       "myAppInsightsInstanceName": "logs-apmservice",
-      "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '81a9662b-bebf-436f-a333-f67b29880f12')]",
-      "owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+      "keyoperator": "[resourceId('Microsoft.Authorization/roleDefinitions', '81a9662b-bebf-436f-a333-f67b29880f12')]",
+      "owner": "[resourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
       "offerType": "BYOL",
       "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
       "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2021a/azuredeploy-existing-vnet-R2021a.json",
@@ -523,7 +523,7 @@
                 "timestamp": 123456789
               },
               "protectedSettings": {
-                "commandToExecute": "[concat( 'sudo ./initMasterVM.sh ''', variables('storageAccountName'), ''' ''', listKeys(variables('storageAccountName'), '2019-06-01').keys[0].value, ''' ''', 'mydbConnection', ''' ''', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://', reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://', variables('appGWprivateIP'), ':444')), ''' ''', reference(variables('subnetRef'), '2020-07-01').addressPrefix, ''' ''', 'Azure', ''' ''', variables('Platform'), ''' ''', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2020-02-02-preview').InstrumentationKey, ''' ''', resourceGroup().name, ''' ''', subscription().subscriptionId, ''' ''', parameters('adminUsername'), ''' ''', parameters('adminPassword'), ''' ''', 'true', ''' ''', variables('redisCacheName'), ''' ''', concat('https://', variables('appGWprivateIP'), ':444'), ''' ''', variables('offerType'), '''' )]",
+                "commandToExecute": "[concat( 'sudo ./initMasterVM.sh ''', variables('storageAccountName'), ''' ''', listKeys(variables('storageAccountName'), '2021-06-01').keys[0].value, ''' ''', 'mydbConnection', ''' ''', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://', reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://', variables('appGWprivateIP'), ':444')), ''' ''', reference(variables('subnetRef'), '2020-07-01').addressPrefix, ''' ''', 'Azure', ''' ''', variables('Platform'), ''' ''', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2020-02-02').InstrumentationKey, ''' ''', resourceGroup().name, ''' ''', subscription().subscriptionId, ''' ''', parameters('adminUsername'), ''' ''', parameters('adminPassword'), ''' ''', 'true', ''' ''', variables('redisCacheName'), ''' ''', concat('https://', variables('appGWprivateIP'), ':444'), ''' ''', variables('offerType'), '''' )]",
                 "fileUris": ["[variables('masterVMScriptURL')]"]
               }
             }
@@ -917,7 +917,7 @@
       {
         "type": "Microsoft.Storage/storageAccounts",
         "name": "[variables('storageAccountName')]",
-        "apiVersion": "2019-06-01",
+        "apiVersion": "2021-06-01",
         "location": "[parameters('location')]",
         "tags": {
           "Description": "Storage account that stores application and config files"
@@ -931,7 +931,7 @@
       {
         "type": "Microsoft.Cache/Redis",
         "name": "[variables('redisCacheName')]",
-        "apiVersion": "2019-07-01",
+        "apiVersion": "2020-12-01",
         "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
         "tags": {
           "Description": "Azure Cache for Redis to store persistence data"
@@ -949,13 +949,12 @@
       {
         "type": "Microsoft.Insights/Components",
         "name": "[variables('myAppInsightsInstanceName')]",
-        "apiVersion": "2020-02-02-preview",
+        "apiVersion": "2020-02-02",
         "tags": {
           "Description": "Application Insights instance that stores solution logs"
         },
         "location": "[parameters('location')]",
         "properties": {
-          "ApplicationId": "[variables('myAppInsightsInstanceName')]",
           "Application_Type": "[variables('AppInsights-AppType')]",
           "Flow_Type": "Redfield",
           "Request_Source": "[variables('AppInsights-requestSource')]"
@@ -970,7 +969,7 @@
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
         ],
         "properties": {
-          "roleDefinitionId": "[variables('contributor')]",
+          "roleDefinitionId": "[variables('keyoperator')]",
           "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2020-06-01', 'Full').identity.principalId]",
           "principalType": "ServicePrincipal"
         }
@@ -984,7 +983,7 @@
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
         ],
         "properties": {
-          "roleDefinitionId": "[variables('contributor')]",
+          "roleDefinitionId": "[variables('keyoperator')]",
           "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')), '2020-06-01', 'Full').identity.principalId]",
           "principalType": "ServicePrincipal"
         }
