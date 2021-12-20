@@ -140,19 +140,16 @@ In addition to the parameters specified in the section [Configure Cloud Resource
 | `22`, `3389` | Required for Remote Desktop functionality. This can be used for troubleshooting and debugging. |
 
 ## How do I launch a template that uses a previous MATLAB release?
-| Release | Windows Server VM                                                                                                                                                                                                                                                                         | Ubuntu VM                                                                                                                                                                                                                                                                    |
-|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| R2020a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> | <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a> |
 
+Releases prior to R2020b are no longer available.
 
 For more information, see [previous releases](/releases).
 
 
 ## What versions of MATLAB Runtime are supported?
 
-| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime |
-|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
-| MATLAB R2020a | R2017b | R2018a | R2018b | R2019a | R2019b | R2020a |
+| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime |
+|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
 | MATLAB R2020b |  | R2018a | R2018b | R2019a | R2019b | R2020a | R2020b |
 
 

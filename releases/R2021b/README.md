@@ -146,7 +146,6 @@ You may use one of the deploy buttons below to deploy an older release of MATLAB
 |---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | R2021a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2021a%2Ftemplates%2Fazuredeploy21a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> |
 | R2020b  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020b%2Ftemplates%2Fazuredeploy20b.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> |
-| R2020a  | <a   href  ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2020a%2Ftemplates%2Fazuredeploy20a.json"   target  ="_blank"  >   <img   src  ="http://azuredeploy.net/deploybutton.png"  />   </a> |
 
 
 For more information, see [previous releases](/releases).
@@ -154,12 +153,11 @@ For more information, see [previous releases](/releases).
 
 ## What versions of MATLAB Runtime are supported?
 
-| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime |
-|---------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
-| MATLAB R2020a | R2017b | R2018a | R2018b | R2019a | R2019b | R2020a |
-| MATLAB R2020b |  | R2018a | R2018b | R2019a | R2019b | R2020a | R2020b |
-| MATLAB R2021a |  |  | R2018b | R2019a | R2019b | R2020a | R2020b | R2021a |
-| MATLAB R2021b |  |  |  | R2019a | R2019b | R2020a | R2020b |R2021a | R2021b |
+| Release | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime | MATLAB Runtime |
+|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
+| MATLAB R2020b | R2018a | R2018b | R2019a | R2019b | R2020a | R2020b |
+| MATLAB R2021a |  | R2018b | R2019a | R2019b | R2020a | R2020b | R2021a |
+| MATLAB R2021b |  |  | R2019a | R2019b | R2020a | R2020b |R2021a | R2021b |
 
 
 
