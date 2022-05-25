@@ -258,7 +258,7 @@
       },
       "subnetName": { "value": "[variables('subnetName')]" }
     },
-    "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2021b/scripts/",
+    "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2022a/scripts/",
     "_artifactsLocationSasToken":""
   },
   "resources": [
