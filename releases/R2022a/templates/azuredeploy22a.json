@@ -467,7 +467,8 @@
         "[resourceId('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
         "[resourceId('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
         "[resourceId('Microsoft.Cache/Redis/',variables('redisCacheName'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
+        "[resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName'))]"
       ],
       "identity": {
         "type": "SystemAssigned"
@@ -513,7 +514,7 @@
         {
           "type": "extensions",
           "name": "config-app",
-          "apiVersion": "2020-06-01",
+          "apiVersion": "2022-03-01",
           "location": "[parameters('location')]",
           "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
@@ -825,7 +826,7 @@
     {
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[variables('namingInfix')]",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2022-03-01",
       "location": "[parameters('location')]",
       "identity": {
         "type": "SystemAssigned"
@@ -969,6 +970,9 @@
       "type": "Microsoft.Insights/Components",
       "name": "[variables('myAppInsightsInstanceName')]",
       "apiVersion": "2020-02-02",
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceName'))]"
+      ],
       "tags": {
         "Description": "Application Insights instance that stores solution logs"
       },
@@ -990,7 +994,7 @@
       ],
       "properties": {
         "roleDefinitionId": "[variables('keyoperator')]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2020-06-01', 'Full').identity.principalId]",
+        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2022-03-01', 'Full').identity.principalId]",
         "principalType": "ServicePrincipal"
       }
     },
@@ -1004,7 +1008,7 @@
       ],
       "properties": {
         "roleDefinitionId": "[variables('keyoperator')]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')), '2020-06-01', 'Full').identity.principalId]",
+        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')), '2022-03-01', 'Full').identity.principalId]",
         "principalType": "ServicePrincipal"
       }
     },
@@ -1020,7 +1024,7 @@
       ],
       "properties": {
         "roleDefinitionId": "[variables('owner')]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2020-06-01', 'Full').identity.principalId]",
+        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2022-03-01', 'Full').identity.principalId]",
         "principalType": "ServicePrincipal"
       }
     }
