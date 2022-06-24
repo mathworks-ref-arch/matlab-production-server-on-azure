@@ -12,7 +12,7 @@ import cloud_deployment_testtools.deploy as DeployOp
 from datetime import date
 import datetime
 
-def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, keyVaultSecret, ManagedIdentityResourceID):
+def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, keyVaultSecret, ManagedIdentityResourceID, location_arg, platform_arg):
     # Reference architectures in production.
     ref_arch_name = 'matlab-production-server-on-azure'
 
@@ -22,31 +22,22 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
     client_secret = client_secret_arg
     credentials = AzureAuth.authenticate_client_key(tenant_id, client_id, client_secret)
     subscription_id = subscription_id_arg
+    location = location_arg
 
-    parameters1 = {
+    parameters = {
         "adminUsername": username,
         "adminPassword": password,
         "Allow connections from": ipAddress,
-        "Platform": "Linux"
-    }
-
-    parameters2 = {
-        "adminUsername": username,
-        "adminPassword": password,
-        "Allow connections from": ipAddress,
-        "Platform": "Linux",
+        "Platform": platform_arg,
         "KeyVaultCertificateSecretID": keyVaultSecret,
         "ManagedIdentityResourceIDForKeyVault": ManagedIdentityResourceID
     }
-
-    location = 'eastus'
-    
 
     # Find latest MATLAB release from Github page and get template json path.
     res = requests.get(
         f"https://github.com/mathworks-ref-arch/{ref_arch_name}/blob/master/releases/"
     )
-    
+
     latest_releases = [re.findall("master/releases/(R\d{4}[ab]\\b)", res.text)[-1], re.findall("master/releases/(R\d{4}[ab]\\b)", res.text)[-2]]
     for i in range(2):
         matlab_release = latest_releases[i]
@@ -59,16 +50,21 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         print("Date time before deployment of stack:-", ct)
 
         try:
-            if matlab_release == "R2020b":
-                DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters1)
-            else:
-                DeployOp.deploy_production_template(credentials, subscription_id, resource_group_name, location, ref_arch_name, template_name, parameters2)
+            deployment_result = DeployOp.deploy_production_template(credentials,
+                                                   subscription_id,
+                                                   resource_group_name,
+                                                   location,
+                                                   ref_arch_name,
+                                                   template_name,
+                                                   parameters
+                                                   )
         except Exception as e:
             raise (e)
+
         # delete the deployment
         DeployOp.delete_resourcegroup(credentials, subscription_id, resource_group_name)
         ct = datetime.datetime.now()
         print("Date time after deployment and deletion of stack:-", ct)
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9])
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], sys.argv[11])
