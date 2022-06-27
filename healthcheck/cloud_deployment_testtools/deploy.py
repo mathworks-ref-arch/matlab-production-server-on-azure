@@ -11,6 +11,7 @@ from azure.mgmt.resource.resources.models import DeploymentMode
 from azure.mgmt.resource.resources.models import TemplateLink
 import cloud_deployment_testtools.MarketPlaceAgreement as agreement
 import cloud_deployment_testtools.getResourceClient as getResourceClient
+from azure.mgmt.network import NetworkManagementClient
 
 def deploy_production_template(credentials,
     subscription_id,
