@@ -59,6 +59,65 @@ def deploy_production_template(credentials,
     print(deployment_result)
     print("Done with the deployment... \n\n")
     return deployment_result
+
+def create_vnet(credentials,
+    subscription_id,
+    location,
+    subnets_cidr,
+    resource_name_vnet,
+    vnet_cidr):
+
+    resource_client = getResourceClient.get_resource_client(credentials, subscription_id)
+    vnet_name = 'my_vnet'
+
+    # Create resource group
+    print("Creating a resource group with a virtual network... \n")
+    resource_client.resource_groups.create_or_update(
+        resource_name_vnet,
+        {'location': location}
+    )
+    network_client = NetworkManagementClient(credentials, subscription_id)
+
+    print("Resource group created...\n")
+
+    # Create virtual network
+    async_vnet_creation = network_client.virtual_networks.create_or_update(
+          resource_name_vnet,
+          vnet_name,
+          {
+            'address_space': {
+                'address_prefixes': [vnet_cidr]
+          },
+          'location': location
+
+        }
+    )
+
+    # Wait for the virtual network creation
+    async_vnet_creation.wait()
+
+    print("Added a virtual network... \n")
+
+    # Array to store the names of the subnets created
+    subnet_names = []
+
+    for i in range(1, len(subnets_cidr) + 1):
+
+         # Create Subnet
+         subnet_name = "subnet" + str(i)
+         async_subnet_creation = network_client.subnets.create_or_update(
+                                               resource_name_vnet,
+                                               vnet_name,
+                                               subnet_name,
+                                               {'address_prefix': subnets_cidr[i-1]}
+                                               )
+         subnet_info = async_subnet_creation.result()
+         # Add created subnet name to subnet_names array
+         subnet_names.append(subnet_info.name)
+
+    print("Added " + str(len(subnets_cidr)) + " subnets")
+    # Return the names of subnets created and name of the virtual network
+    return subnet_names, vnet_name
     
 def delete_resourcegroup(credentials, subscription_id, resource_group_name) :
     resource_client = getResourceClient.get_resource_client(credentials, subscription_id)
