@@ -6,7 +6,6 @@
 name: MATLAB Production Server Ref Arch Azure Health Check Test
 
 on:
- push:
  branches:
       - staging
  schedule:
