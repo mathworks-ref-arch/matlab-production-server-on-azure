@@ -6,10 +6,8 @@
 name: MATLAB Production Server Ref Arch Azure Health Check Test
 
 on:
- branches:
-      - staging
  schedule:
-    - cron: '0 15 * * 2'
+    - cron: '0 16 * * 2'
 jobs:
   build:
     runs-on: ubuntu-latest
