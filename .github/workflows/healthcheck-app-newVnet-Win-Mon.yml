@@ -6,6 +6,7 @@
 name: MATLAB Production Server Ref Arch Azure Health Check Test
 
 on:
+ push:
  schedule:
     - cron: '0 16 * * 1'
 jobs:
