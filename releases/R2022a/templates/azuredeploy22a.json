@@ -238,10 +238,10 @@
     "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
     "LinuxSKUDisk2": "matlab-production-server-byol-linux-22a",
     "LinuxOfferDisk2": "matlab-production-server-byol-linux",
-    "WindowsDisk1Version": "1.0.0",
-    "WindowsDisk2Version": "1.0.0",
+    "WindowsDisk1Version": "latest",
+    "WindowsDisk2Version": "latest",
     "LinuxDisk1Version": "[variables('WindowsDisk1Version')]",
-    "LinuxDisk2Version": "1.0.0",
+    "LinuxDisk2Version": "latest",
     "windowsScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.ps1', variables('_artifactsLocationSasToken')))]",
     "linuxScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.sh', variables('_artifactsLocationSasToken')))]",
     "masterVMScriptURL": "[uri(variables('_artifactsLocation'), concat('initMasterVM.sh', variables('_artifactsLocationSasToken')))]",
@@ -259,6 +259,7 @@
     "flex-parameters": {
       "instanceType": { "value": "Standard_D2s_v3" },
       "clientIPAddress": { "value": "[parameters('Allow connections from')]" },
+      "adminUsername": { "value": "[parameters('adminUsername')]" },
       "adminPassword": { "value": "[parameters('adminPassword')]" },
       "virtualNetworkResourceID": {
         "value": "[variables('virtualNetworkID')]"
@@ -290,7 +291,7 @@
     {
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('networkSecurityGroupName')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2022-01-01",
       "location": "[parameters('location')]",
       "tags": {
         "Description": "Network Security Group to control access to resources"
@@ -368,7 +369,7 @@
     {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2022-01-01",
       "condition": "[equals(variables('virtualNetworkNewOrExisting'), 'new')]",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -406,7 +407,7 @@
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressNameMachine')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2022-01-01",
       "condition": "[equals(parameters('UsePublicIPAddresses'), 'Yes')]",
       "sku": {
         "name": "Standard"
@@ -422,7 +423,7 @@
     {
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('licservernicName')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2022-01-01",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameMachine'))]",
@@ -532,7 +533,7 @@
               "timestamp": 123456789
             },
             "protectedSettings": {
-              "commandToExecute": "[concat( 'sudo ./initMasterVM.sh ''', variables('storageAccountName'), ''' ''', listKeys(variables('storageAccountName'), '2021-06-01').keys[0].value, ''' ''', 'mydbConnection', ''' ''', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://', reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://', variables('appGWprivateIP'), ':444')), ''' ''', reference(variables('subnetRef'), '2020-07-01').addressPrefix, ''' ''', 'Azure', ''' ''', variables('Platform'), ''' ''', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2020-02-02').InstrumentationKey, ''' ''', resourceGroup().name, ''' ''', subscription().subscriptionId, ''' ''', parameters('adminUsername'), ''' ''', parameters('adminPassword'), ''' ''', 'true', ''' ''', variables('redisCacheName'), ''' ''', concat('https://', variables('appGWprivateIP'), ':444'), ''' ''', variables('offerType'), '''' )]",
+              "commandToExecute": "[concat( 'sudo ./initMasterVM.sh ''', variables('storageAccountName'), ''' ''', 'mydbConnection', ''' ''', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://', reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://', variables('appGWprivateIP'), ':444')), ''' ''', reference(variables('subnetRef'), '2022-01-01').addressPrefix, ''' ''', 'Azure', ''' ''', variables('Platform'), ''' ''', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2020-02-02').InstrumentationKey, ''' ''', resourceGroup().name, ''' ''', subscription().subscriptionId, ''' ''', parameters('adminUsername'), ''' ''', parameters('adminPassword'), ''' ''', variables('redisCacheName'), ''' ''', concat('https://', variables('appGWprivateIP'), ':444'), ''' ''', variables('offerType'), '''' )]",
               "fileUris": ["[variables('masterVMScriptURL')]"]
             }
           }
@@ -542,7 +543,7 @@
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('appGwPublicIPAddressName')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2022-01-01",
       "sku": {
         "name": "Standard"
       },
@@ -560,7 +561,7 @@
     {
       "type": "Microsoft.Network/applicationGateways",
       "name": "[variables('appGwName')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2022-01-01",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
@@ -779,7 +780,8 @@
               },
               "urlPathMap": {
                 "id": "[resourceId('Microsoft.Network/applicationGateways/urlPathMaps',variables('appGwName'), 'mainpath')]"
-              }
+              },
+              "priority": 1
             }
           },
           {
@@ -791,7 +793,8 @@
               },
               "urlPathMap": {
                 "id": "[resourceId('Microsoft.Network/applicationGateways/urlPathMaps',variables('appGwName'), 'mainpath')]"
-              }
+              },
+              "priority": 2
             }
           }
         ],
@@ -958,7 +961,7 @@
     {
       "type": "Microsoft.OperationalInsights/workspaces",
       "name": "[variables('workspaceName')]",
-      "apiVersion": "2020-08-01",
+      "apiVersion": "2021-06-01",
       "location": "[parameters('location')]",
       "properties": {
         "sku": {
@@ -987,7 +990,7 @@
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "name": "[guid(resourceGroup().id, deployment().name,'12')]",
-      "apiVersion": "2022-01-01-preview",
+      "apiVersion": "2022-04-01",
       "scope": "[concat('Microsoft.Storage/storageAccounts', '/', variables('storageAccountName'))]",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
@@ -1001,7 +1004,7 @@
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "name": "[guid(resourceGroup().id, deployment().name,'16')]",
-      "apiVersion": "2022-01-01-preview",
+      "apiVersion": "2022-04-01",
       "scope": "[concat('Microsoft.Storage/storageAccounts', '/', variables('storageAccountName'))]",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
@@ -1015,7 +1018,7 @@
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "name": "[guid(resourceGroup().id, deployment().name,'22')]",
-      "apiVersion": "2022-01-01-preview",
+      "apiVersion": "2022-04-01",
       "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
       "scope": "[concat('Microsoft.Cache/Redis', '/', variables('redisCacheName'))]",
       "dependsOn": [
