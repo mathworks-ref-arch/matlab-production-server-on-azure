@@ -3,7 +3,7 @@
 
 # The following workflow file triggers the Existing Virtual Network deployment test "test_healthcheck_existing_vnet.py" every Tuesday with platform as "Windows" in "westeurope" region.
 
-name: MATLAB Production Server Ref Arch Azure Health Check Test
+name: MATLAB Production Server Ref Arch Azure Existing Virtual Network Health Check Test on Windows in West Eu
 
 on:
  schedule:
@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
     - name: Install dependencies
@@ -30,7 +30,7 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: MPS ref Arch Existing Virtual Network Health check test
+    - name: MPS ref Arch Existing Virtual Network Health check test on Windows in West Eu
       run: |
         cd healthcheck
         python test_healthcheck_existing_vnet.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }} ${{ secrets.username }} ${{ secrets.password }} ${{ secrets.ipaddress }} ${{ secrets.keyVaultCertificateSecretID }} ${{ secrets.managedIdentityResourceIDForKeyVault }} "westeurope" "Windows"
