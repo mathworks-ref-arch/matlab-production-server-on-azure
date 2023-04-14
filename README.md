@@ -28,7 +28,7 @@ configure and manage server instances on the cloud. For more information, see [M
 For information about the architecture of this solution, see [Architecture and Resources](#architecture-and-resources).
 
 # Deploy Reference Architecture for Your Release
-To deploy the reference architecture, select your MATLAB Production Server release from the table and follow the instructions to deploy the server using the provided template.
+To deploy the reference architecture, select your MATLAB Production Server release from the table and follow the instructions to deploy the server using the provided template. A deployment of MATLAB Production Server supports MATLAB Runtime versions up to six releases back.
 | Release | Supported MATLAB Runtime Versions |
 | ------- | --------------------------------- |
 | [R2023a](releases/R2023a/README.md) | R2023a, R2022b, R2022a, R2021b, R2021a, R2020b |
@@ -37,7 +37,7 @@ To deploy the reference architecture, select your MATLAB Production Server relea
 | [R2021b](releases/R2021b/README.md) | R2021b, R2021a, R2020b, R2020a, R2019b, R2019a |
 | [R2021a](releases/R2021a/README.md) | R2021a, R2020b, R2020a, R2019b, R2019a, R2018b |
 | [R2020b](releases/R2020b/README.md) | R2020b, R2020a, R2019b, R2019a, R2018b, R2018a |
-
+> **Note**: MathWorks provides templates for only the six most recent releases of MATLAB Production Server. Earlier templates are removed and are no longer supported.
 # Architecture and Resources
 Deploying this reference architecture will create several resources in your
 resource group.
