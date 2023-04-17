@@ -981,8 +981,9 @@
       }
     },
     {
-	      "type": "Microsoft.Network/privateEndpoints",
+	    "type": "Microsoft.Network/privateEndpoints",
       "apiVersion": "2021-05-01",
+      "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
       "name": "[variables('privateEndpointName')]",
       "location": "[parameters('location')]",
       "properties": {
@@ -991,7 +992,7 @@
         },
         "privateLinkServiceConnections": [
           {
-            "name": "[variables('privateEndpointName')]",
+            "name": "[variables('privateEndpointName')]",           
             "properties": {
               "privateLinkServiceId": "[resourceId('Microsoft.Cache/Redis', variables('redisCacheName'))]",
               "groupIds": [
@@ -1011,6 +1012,7 @@
       "apiVersion": "2020-06-01",
       "name": "[variables('privateDnsZoneName')]",
       "location": "global",
+      "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
       "properties": {},
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks', variables('VirtualNetworkName'))]"
@@ -1021,6 +1023,7 @@
       "apiVersion": "2020-06-01",
       "name": "[format('{0}/{1}', variables('privateDnsZoneName'), format('{0}-link', variables('privateDnsZoneName')))]",
       "location": "global",
+      "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
       "properties": {
         "registrationEnabled": false,
         "virtualNetwork": {
@@ -1036,6 +1039,7 @@
       "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
       "apiVersion": "2021-05-01",
       "name": "[variables('privateEndpointDnsGroupName')]",
+      "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
       "properties": {
         "privateDnsZoneConfigs": [
           {
