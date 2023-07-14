@@ -38,7 +38,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         f"https://github.com/mathworks-ref-arch/{ref_arch_name}/blob/master/releases/"
     )
 
-    latest_releases = [re.findall("releases/(R\d{4}[ab]\\b)", res.text)[-1], re.findall("master/releases/(R\d{4}[ab]\\b)", res.text)[-2]]
+    latest_releases = [re.findall("releases/(R\d{4}[ab]\\b)", res.text)[-1], re.findall("releases/(R\d{4}[ab]\\b)", res.text)[-2]]
     for i in range(2):
         matlab_release = latest_releases[i]
         print("Testing Health Check Release: " + matlab_release + "\n")
