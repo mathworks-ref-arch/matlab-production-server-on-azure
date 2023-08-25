@@ -5,10 +5,11 @@ import re
 import requests
 import random
 import traceback
-import cloud_deployment_testtools.AzureAuthentication as AzureAuth
-import cloud_deployment_testtools.deploy as DeployOp
 from datetime import date
 import datetime
+
+import cloud_deployment_testtools.AzureAuthentication as AzureAuth
+import cloud_deployment_testtools.deploy as DeployOp
 
 def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, keyVaultSecret, ManagedIdentityResourceID, location_arg, platform_arg):
     # Reference architectures in production.
