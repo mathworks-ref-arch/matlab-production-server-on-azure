@@ -5,10 +5,8 @@ import re
 import requests
 import random
 import traceback
-
 import cloud_deployment_testtools.AzureAuthentication as AzureAuth
 import cloud_deployment_testtools.deploy as DeployOp
-
 from datetime import date
 import datetime
 
