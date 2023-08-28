@@ -11,7 +11,7 @@ import datetime
 import cloud_deployment_testtools.AzureAuthentication as AzureAuth
 import cloud_deployment_testtools.deploy as DeployOp
 
-def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, keyVaultSecret, ManagedIdentityResourceID, location_arg, platform_arg):
+def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, base64certdata, base64password, location_arg, platform_arg):
     # Reference architectures in production.
     ref_arch_name = 'matlab-production-server-on-azure'
 
@@ -28,8 +28,9 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         "adminPassword": password,
         "Allow connections from": ipAddress,
         "Platform": platform_arg,
-        "KeyVaultCertificateSecretID": keyVaultSecret,
-        "ManagedIdentityResourceIDForKeyVault": ManagedIdentityResourceID
+        "CertificateInputType": "Base64-encoded PFX Certificate",
+        "Base64EncodedPFXCertificateData": base64certdata,
+        "PasswordForBase64EncodedPFXCertificate": base64password
     }
 
     # Find latest MATLAB release from Github page and get template json path.
