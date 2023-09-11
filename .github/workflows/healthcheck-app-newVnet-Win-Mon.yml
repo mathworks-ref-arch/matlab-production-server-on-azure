@@ -34,5 +34,4 @@ jobs:
     - name: MPS ref Arch New Virtual Network Health check test on Windows in East US region
       run: |
         cd healthcheck
-        python test_healthcheck_new_vnet.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }} ${{ secrets.username }} ${{ secrets.password }} ${{ secrets.ipaddress }} ${{ secrets.base64certdata }} ${{ secrets.base64password }} "eastus" "Windows"
-
+        python test_healthcheck_new_vnet.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }} ${{ secrets.username }} ${{ secrets.password }} ${{ secrets.ipaddress }} ${{ secrets.keyVaultCertificateSecretID }} ${{ secrets.managedIdentityResourceIDForKeyVault }} "eastus" "Windows"
