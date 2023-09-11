@@ -12,7 +12,7 @@ import cloud_deployment_testtools.AzureAuthentication as AzureAuth
 import cloud_deployment_testtools.deploy as DeployOp
 from azure.mgmt.network import NetworkManagementClient
 
-def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, keyVaultSecret, ManagedIdentityResourceID, location_arg, platform_arg):
+def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, base64certdata, base64password, location_arg, platform_arg):
 
     # Deploy template
     # Reference architecture in production.
@@ -59,8 +59,9 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
        "Subnet1CIDRRange": subnets_cidr[0],
        "Subnet2CIDRRange": subnets_cidr[1],
        "ResourceGroupNameOfVirtualNetwork": resource_name_vnet,
-       "KeyVaultCertificateSecretID": keyVaultSecret,
-       "ManagedIdentityResourceIDForKeyVault": ManagedIdentityResourceID
+       "CertificateInputType": "Base64-encoded PFX Certificate",
+       "Base64EncodedPFXCertificateData": base64certdata,
+       "PasswordForBase64EncodedPFXCertificate": base64password
     }
 
     print(parameters)
