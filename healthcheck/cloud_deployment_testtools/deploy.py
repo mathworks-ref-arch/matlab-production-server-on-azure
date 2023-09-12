@@ -40,7 +40,7 @@ def deploy_production_template(credentials,
         {'location': location}
     )
 
-    agreement.market_place_agreement(ref_arch_name, credentials, subscription_id)
+    #agreement.market_place_agreement(ref_arch_name, credentials, subscription_id)
 
     print("Beginning the deployment... \n\n")
     # Deploy template.
