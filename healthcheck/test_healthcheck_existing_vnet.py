@@ -34,7 +34,8 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
 
     # Deploy a resource group with a virtual network and specified number of subnets
     try:
-          subnet_names, vnet_name = DeployOp.create_vnet(credentials,
+        credentials = AzureAuth.authenticate_client_key(tenant_id, client_id, client_secret)  
+        subnet_names, vnet_name = DeployOp.create_vnet(credentials,
                                                         subscription_id,
                                                         location,
                                                         subnets_cidr,
