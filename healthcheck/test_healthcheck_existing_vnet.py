@@ -22,7 +22,6 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
     tenant_id = tenant_id_arg
     client_id = client_id_arg
     client_secret = client_secret_arg
-    credentials = AzureAuth.authenticate_client_key(tenant_id, client_id, client_secret)
     subscription_id = subscription_id_arg
     location = location_arg
 
@@ -81,6 +80,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         resource_group_name = "mps-refarch-health-check-existing-vnet" + matlab_release + date.today().strftime('%m-%d-%Y') + str(random.randint(1,101))
         ct = datetime.datetime.now()
         print("Date time before deployment of stack:-", ct)
+        credentials = AzureAuth.authenticate_client_key(tenant_id, client_id, client_secret)
 
         try:
             deployment_result = DeployOp.deploy_production_template(credentials,
