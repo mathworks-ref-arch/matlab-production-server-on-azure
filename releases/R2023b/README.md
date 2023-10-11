@@ -1,12 +1,12 @@
-# MATLAB Production Server on Microsoft Azure - R2023b
-Follow these steps to deploy the R2023b MATLAB Production Server reference architecture on Microsoft Azure. To deploy reference architectures for other releases, see [Deploy Reference Architecture for Your Release](/README.md#deploy-reference-architecture-for-your-release). 
+# MATLAB Production Server on Microsoft Azure - R2023a
+Follow these steps to deploy the R2023a MATLAB Production Server reference architecture on Microsoft Azure. To deploy reference architectures for other releases, see [Deploy Reference Architecture for Your Release](/README.md#deploy-reference-architecture-for-your-release). 
 
 ## Step 1. Launch Template
-To deploy resources on Azure, click **Deploy to Azure**. The Azure Portal opens in your web browser.
+To deploy resources on Azure, click **Deploy to Azure**. The Azure Portal open in your web browser.
 
- <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2023b%2Ftemplates%2Fazuredeploy23b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>
+ <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2023a%2Ftemplates%2Fazuredeploy23a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>
 
-> MATLAB Release: R2023b
+> MATLAB Release: R2023a
 
 <p>Creating resources on Azure can take at least 30 minutes.</p>
 
