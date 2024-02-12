@@ -47,26 +47,39 @@ resource group.
 
 ![Cluster Architecture](/releases/R2023a/images/mps-ref-arch-azure-architecture-diagram.jpg?raw=true)
 
-### Resources
-| Resource Name                                                              | Resource Name in Azure  | Number of Resources | Description                                                                                                                                                                                                                                                                                                                        |
+## Resources
+### Matlab Production Server Resources
+| Resource Name                                                              | Resource Name in Azure  | Number of Resources | Description                                                                                                            |
+|----------------------------------------------------------------------------|-------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Virtual network | `mps-network` | 1 | Provide support and security to the operation of MATLAB Production Server. |
+| Storage account                                                            | `serverlog<uniqueID>`   | 1                  | Storage account where the deployable archives (CTF files) created by MATLAB® Compiler SDK™ will be stored. The deployable archives (CTF files) will be stored in a file share.                                                                                                                           |
+| Application Insights |  `logs-apmservice` | 1 | Enables storing and viewing of all logs associated with deployment. |
+| Log analytics workspace | `logs-workspace` | 1 | Workspace that contains data collected from various sources. |
+
+### Virtual Machine Scale Set Resources
+| Resource Name                                                              | Resource Name in Azure  | Number of Resources | Description                                                                                                            |
+|----------------------------------------------------------------------------|-------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Virtual machine scale set                                                  | `vmss<uniqueID>`        | 1                   | Manages the number of identical VMs to be deployed. Each VM runs an instance of MATLAB Production Server which in turn runs multiple MATLAB workers.                                                                                                                                                                               |
+| Application gateway                                                        | `vmss<uniqueID>-agw`    | 1                   | Provides routing and load balancing service to MATLAB Production Server instances. The MATLAB Production Server dashboard retrieves the HTTP/HTTPS endpoint for making requests to the server from the application gateway resource.<p>**NOTE**: Provides HTTPS endpoint to the server for making requests.</p>                                                                                           |
+| Virtual network                                                           | `vmss<uniqueID>-vnet`   | 1                   | Enables resources to communicate with each other.                                                                                                                                                                                                                                                                                  |
+|Network security group | `vmss<uniqueID>-rdp-nsg` | 1 | Filter network traffic to and from virtual machine scale set in an Azure virtual network. |
+|Public IP address | `Vmss<uniqueID>-pip` | 1 | Provide public IP address to virtual machine scale set. |
+
+### Admin Dashboard Resources
+| Resource Name                                                              | Resource Name in Azure  | Number of Resources | Description                                                                                                            |
 |----------------------------------------------------------------------------|-------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | MATLAB Production Server dashboard virtual machine | `admindashboard`           | 1                   | Virtual machine (VM) that hosts the MATLAB Production Server dashboard. Use the dashboard to: <ul><li>Get HTTP/HTTPS endpoint to make requests</li><li> Upload applications (CTF files) to the server</li><li> Manage server configurations</li></ul><p>For more information, see [Manage MATLAB Production Server Using the Dashboard](https://www.mathworks.com/help/mps/server/use-matlab-production-server-cloud-dashboard-on-azure-reference-architecture.html).   |
 | MATLAB Production Server dashboard public IP                           | `admindashboard-public-ip` | 1                   | Public IP address to connect to MATLAB Production Server dashboard.<p>**NOTE**: Provides HTTPS endpoint to the dashboard for managing server instances.</p>                                                                                                                                                                                                                                                            |
-| Virtual machine scale set                                                  | `vmss<uniqueID>`        | 1                   | Manages the number of identical VMs to be deployed. Each VM runs an instance of MATLAB Production Server which in turn runs multiple MATLAB workers.                                                                                                                                                                               |
-| Application gateway                                                        | `vmss<uniqueID>-agw`    | 1                   | Provides routing and load balancing service to MATLAB Production Server instances. The MATLAB Production Server dashboard retrieves the HTTP/HTTPS endpoint for making requests to the server from the application gateway resource.<p>**NOTE**: Provides HTTPS endpoint to the server for making requests.</p>                                                                                           |
-| Storage account                                                            | `serverlog<uniqueID>`   | 1                  | Storage account where the deployable archives (CTF files) created by MATLAB® Compiler SDK™ will be stored. The deployable archives (CTF files) will be stored in a file share.                                                                                                                                                                                                  |
-| Virtual network                                                           | `vmss<uniqueID>-vnet`   | 1                   | Enables resources to communicate with each other.                                                                                                                                                                                                                                                                                  |
+| Disk | `admindashboard_OsDisk_<uniqueID>` | 1 | Operating system disk attached to admin dashboard. |
+| Network interface	| `admindashboard-nic` | 1	| Provide network interface for admin dashboard. |
+
+### Redis Resources
+| Resource Name                                                              | Resource Name in Azure  | Number of Resources | Description                                                                                                            |
+|----------------------------------------------------------------------------|-------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Azure Cache for Redis |  `vmss<uniqueID>redis` | 1 | Enables caching of data between calls to MATLAB code running on a server instance. |
-| Application Insights |  `logs-apmservice` | 1 | Enables storing and viewing of all logs associated with deployment. |
-| Disk | `admindashboard_OsDisk_<uniqueID>` | 1 | Operating system disk attached to server machine. |
-| Log analytics workspace | `logs-workspace` | 1 | Workspace that contains data collected from various sources. |
 | Network interface	| `redisPrivateEndpoint.nic.<uniqueID>` | 1 | Provide network interface for Redis private endpoint. |
-| Network interface	| `admindashboard-nic` | 1	| Provide network interface for server machine. |
-|Network security group | `vmss<uniqueID>-rdp-nsg` | 1 | Filter network traffic to and from virtual machine scale set in an Azure virtual network. |
-|Private DNS zone | `privatelink.redis.cache.windows.net` | 1 | Provide DNS resolution for the private endpoint of Redis cache. |
-|Private endpoint | `redisPrivateEndpoint` | 1 | Private endpoint for Redis. |
-|Public IP address | `Vmss<uniqueID>-pip` | 1 | Provide public IP address to virtual machine scale set. |
-|Virtual network | `mps-network` | 1 | Provide support and security to the operation of MATLAB Production Server. |
+|Private DNS zone | `privatelink.redis.cache.windows.net` | 1 | Provide DNS resolution for the private endpoint of Redis cache.|
+| Private endpoint | `redisPrivateEndpoint` | 1 | Private endpoint for Redis.|
 
 **Note**: Some or all of these resources will get created depending on inputs provided to the deployment template. For example, Redis may or may not get created.
 
