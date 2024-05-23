@@ -4,7 +4,7 @@ Follow these steps to deploy the R2023a MATLAB Production Server reference archi
 ## Step 1. Launch Template
 To deploy resources on Azure, click **Deploy to Azure**. The Azure Portal open in your web browser.
 
- <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2023a%2Ftemplates%2Fazuredeploy23a.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2023a%2Ftemplates%2Fazuredeploy23a.json)
 
 > MATLAB Release: R2023a
 
