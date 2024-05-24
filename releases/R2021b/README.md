@@ -34,7 +34,7 @@ For information about the architecture of this solution, see [Architecture and R
 Click the **Deploy to Azure** button to deploy resources on
     Azure. This will open the Azure Portal in your web browser.
 
- <a  href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2021b%2Ftemplates%2Fazuredeploy21b.json"  target ="_blank" >  <img  src ="http://azuredeploy.net/deploybutton.png" />  </a>
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2021b%2Ftemplates%2Fazuredeploy21b.json)
 
 > MATLAB Release: R2021b
 
