@@ -250,7 +250,7 @@
     "linuxScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.sh', variables('_artifactsLocationSasToken')))]",
     "adminVMScriptURL": "[uri(variables('_artifactsLocation'), concat('initAdminVM.sh', variables('_artifactsLocationSasToken')))]",
     "commandToExecuteWindows": "[concat('powershell -ExecutionPolicy Unrestricted -File scriptScaleSet.ps1 ' )]",
-    "commandToExecuteLinux": "[concat('echo hello ' )]",
+    "commandToExecuteLinux": "[concat('sudo ./scriptScaleSet.sh')]",
     "AppInsights-AppType": "Node.JS",
     "AppInsights-requestSource": "rest",
     "myAppInsightsInstanceName": "logs-apmservice",
