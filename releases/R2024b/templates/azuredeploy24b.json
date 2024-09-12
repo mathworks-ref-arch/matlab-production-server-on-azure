@@ -282,7 +282,7 @@
           "value": "[parameters('UsePublicIPAddresses')]"
       }
     },
-    "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/staging/releases/R2024b/scripts/",
+    "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2024b/scripts/",
     "_artifactsLocationSasToken":""
   },
   "resources": [
