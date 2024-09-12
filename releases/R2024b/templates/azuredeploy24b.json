@@ -259,7 +259,7 @@
     "owner": "[resourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
     "offerType": "BYOL",
     "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
-    "flex-arm-template-link": "https://mwappdeployment.blob.core.windows.net/webappserver-artifacts-r2024b/nlm.json?sv=2023-01-03&st=2024-09-04T17%3A52%3A24Z&se=2024-10-31T17%3A52%3A00Z&sr=b&sp=r&sig=ddj6a8hFr2Ei0zUfMPtzNFsSAr4cba6ofw7FjDv3H0Y%3D",
+    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2024b/azuredeploy-R2024b.json",
     "flex-parameters": {
         "instanceType": { "value": "Standard_D2s_v3"
         },
