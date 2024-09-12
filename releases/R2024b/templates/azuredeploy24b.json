@@ -157,28 +157,28 @@
     "KeyVaultCertificateSecretID": {
       "type": "securestring",
       "metadata": {
-        "description": "Secret ID of SSL certificate present in Key Vault."
+        "description": "Secret ID of SSL certificate present in Key Vault. Required if \"Certificate Input Type\" is \"KeyVault\"."
       },
       "defaultValue": "" 
     },
     "ManagedIdentityResourceIDForKeyVault": {
       "type": "string",
       "metadata": {
-        "description": "Resource ID of the managed identity that has permission to access Key Vault."
+        "description": "Resource ID of the managed identity that has permission to access Key Vault. Required if \"Certificate Input Type\" is \"KeyVault\"."
       },
       "defaultValue": "" 
     },
     "Base64EncodedPFXCertificateData": {
       "type": "string",
       "metadata": {
-        "description": "Base64-encoded SSL certificate string in PFX format."
+        "description": "Base64-encoded SSL certificate string in PFX format. Required if \"Certificate Input Type\" is \"Base64-encoded PFX Certificate\"."
       },
       "defaultValue": "" 
     },
     "PasswordForBase64EncodedPFXCertificate": {
       "type": "securestring",
       "metadata": {
-        "description": "Password for Base64-encoded SSL certificate."
+        "description": "Password for Base64-encoded SSL certificate. Required if \"Certificate Input Type\" is \"Base64-encoded PFX Certificate\"."
       },
       "defaultValue": "" 
     }
@@ -234,13 +234,13 @@
       "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNameMachine'))]"
     },
     "Platform": "[parameters('Platform')]",
-    "WindowsSKUDisk1": "matlab-production-server-admin-vm-24a",
+    "WindowsSKUDisk1": "matlab-production-server-admin-vm-24b",
     "WindowsOfferDisk1": "matlab-production-server-payg-master",
-    "WindowsSKUDisk2": "matlab-production-server-worker-windows-24a",
+    "WindowsSKUDisk2": "matlab-production-server-worker-windows-24b",
     "WindowsOfferDisk2": "matlab-production-server-byol-windows",
     "LinuxSKUDisk1": "[variables('WindowsSKUDisk1')]",
     "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
-    "LinuxSKUDisk2": "matlab-production-server-worker-linux-24a",
+    "LinuxSKUDisk2": "matlab-production-server-worker-linux-24b",
     "LinuxOfferDisk2": "matlab-production-server-byol-linux",
     "WindowsDisk1Version": "latest",
     "WindowsDisk2Version": "latest",
@@ -259,25 +259,37 @@
     "owner": "[resourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
     "offerType": "BYOL",
     "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
-    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2024a/azuredeploy-existing-vnet-R2024a.json",
+    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2024b/azuredeploy-R2024b.json",
     "flex-parameters": {
-      "instanceType": { "value": "Standard_D2s_v3" },
-      "clientIPAddress": { "value": "[parameters('Allow connections from')]" },
-	"adminUsername": { "value": "[parameters('adminUsername')]" },																
-      "adminPassword": { "value": "[parameters('adminPassword')]" },
-      "virtualNetworkResourceID": {
-        "value": "[variables('virtualNetworkID')]"
-      },
-      "subnetName": { "value": "[variables('subnetName')]" }
+        "instanceType": { "value": "Standard_D2s_v3"
+        },
+        "clientIPAddressList": {
+            "value": "[parameters('Allow connections from')]"
+        },
+        "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+        },
+        "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+        },
+        "existingVnetResourceID": {
+            "value": "[variables('virtualNetworkID')]"
+        },
+        "existingSubnetName": {
+            "value": "[variables('subnetName')]"
+        },
+        "createPublicIPAddress":{
+          "value": "[parameters('UsePublicIPAddresses')]"
+      }
     },
-    "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/staging/releases/R2024a/scripts/",
+    "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2024b/scripts/",
     "_artifactsLocationSasToken":""
   },
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
       "name": "flex-lm-server",
-      "apiVersion": "2021-04-01",
+      "apiVersion": "2023-07-01",
       "condition": "[equals(variables('should-deploy-flex'), 'Yes')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
@@ -295,7 +307,7 @@
     {
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('networkSecurityGroupName')]",
-      "apiVersion": "2022-01-01",
+      "apiVersion": "2023-06-01",
       "location": "[parameters('location')]",
       "tags": {
         "Description": "Network Security Group to control access to resources"
@@ -373,7 +385,7 @@
     {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
-      "apiVersion": "2022-01-01",
+      "apiVersion": "2023-06-01",
       "condition": "[equals(variables('virtualNetworkNewOrExisting'), 'new')]",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -411,7 +423,7 @@
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressNameMachine')]",
-      "apiVersion": "2022-01-01",
+      "apiVersion": "2023-06-01",
       "condition": "[equals(parameters('UsePublicIPAddresses'), 'Yes')]",
       "sku": {
         "name": "Standard"
@@ -427,7 +439,7 @@
     {
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('licservernicName')]",
-      "apiVersion": "2022-01-01",
+      "apiVersion": "2023-06-01",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameMachine'))]",
@@ -464,7 +476,7 @@
     {
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('vmName')]",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-09-01",
       "tags": {
         "Description": "Virtual machine running the Admin Dashboard"
       },
@@ -519,7 +531,7 @@
         {
           "type": "extensions",
           "name": "config-app",
-          "apiVersion": "2022-03-01",
+          "apiVersion": "2023-09-01",
           "location": "[parameters('location')]",
           "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
@@ -547,7 +559,7 @@
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('appGwPublicIPAddressName')]",
-      "apiVersion": "2022-01-01",
+      "apiVersion": "2023-06-01",
       "sku": {
         "name": "Standard"
       },
@@ -565,7 +577,7 @@
     {
       "type": "Microsoft.Network/applicationGateways",
       "name": "[variables('appGwName')]",
-      "apiVersion": "2022-01-01",
+      "apiVersion": "2023-06-01",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
@@ -851,7 +863,7 @@
     {
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[variables('namingInfix')]",
-      "apiVersion": "2022-03-01",
+      "apiVersion": "2023-09-01",
       "location": "[parameters('location')]",
       "identity": {
         "type": "SystemAssigned"
@@ -951,7 +963,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
-      "apiVersion": "2021-06-01",
+      "apiVersion": "2023-04-01",
       "location": "[parameters('location')]",
       "tags": {
         "Description": "Storage account that stores application and config files"
@@ -965,7 +977,7 @@
     {
       "type": "Microsoft.Cache/Redis",
       "name": "[variables('redisCacheName')]",
-      "apiVersion": "2020-12-01",
+      "apiVersion": "2023-08-01",
       "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
       "tags": {
         "Description": "Azure Cache for Redis to store persistence data"
@@ -982,7 +994,7 @@
     },
     {
 	    "type": "Microsoft.Network/privateEndpoints",
-      "apiVersion": "2021-05-01",
+      "apiVersion": "2023-06-01",
       "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
       "name": "[variables('privateEndpointName')]",
       "location": "[parameters('location')]",
@@ -1037,7 +1049,7 @@
     },
     {
       "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
-      "apiVersion": "2021-05-01",
+      "apiVersion": "2023-06-01",
       "name": "[variables('privateEndpointDnsGroupName')]",
       "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
       "properties": {
@@ -1058,7 +1070,7 @@
     {											   
       "type": "Microsoft.OperationalInsights/workspaces",
       "name": "[variables('workspaceName')]",
-      "apiVersion": "2021-06-01",
+      "apiVersion": "2022-10-01",
       "location": "[parameters('location')]",
       "properties": {
         "sku": {
@@ -1094,7 +1106,7 @@
       ],
       "properties": {
         "roleDefinitionId": "[variables('keyoperator')]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2022-03-01', 'Full').identity.principalId]",
+        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2023-09-01', 'Full').identity.principalId]",
         "principalType": "ServicePrincipal"
       }
     },
@@ -1108,7 +1120,7 @@
       ],
       "properties": {
         "roleDefinitionId": "[variables('keyoperator')]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')), '2022-03-01', 'Full').identity.principalId]",
+        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('namingInfix')), '2023-09-01', 'Full').identity.principalId]",
         "principalType": "ServicePrincipal"
       }
     },
@@ -1124,7 +1136,7 @@
       ],
       "properties": {
         "roleDefinitionId": "[variables('owner')]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2022-03-01', 'Full').identity.principalId]",
+        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('vmName')), '2023-09-01', 'Full').identity.principalId]",
         "principalType": "ServicePrincipal"
       }
     }
