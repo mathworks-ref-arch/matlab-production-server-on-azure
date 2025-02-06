@@ -6,7 +6,7 @@
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Location Where the Template will be deployed"
+        "description": "Location where the template will be deployed"
       }
     },
     "Server VM Instance Size": {
@@ -53,7 +53,7 @@
     "CreateAzureRedisCache": {
       "type": "string",
       "allowedValues": ["Yes", "No"],
-      "defaultValue": "Yes",
+      "defaultValue": "No",
       "metadata": {
         "description": "Specify whether you want to create an Azure Redis Cache that lets you use the data caching functionality on the server."
       }
@@ -79,7 +79,7 @@
       "defaultValue": "new",
       "allowedValues": ["new", "existing"],
       "metadata": {
-        "description": "Specify whether to create a new Virtual Network or use an existing one."
+        "description": "Specify whether to create a new virtual network or use an existing one."
       }
     },
     "VirtualNetworkName": {
@@ -107,21 +107,21 @@
       "type": "string",
       "defaultValue": "10.0.0.0/16",
       "metadata": {
-        "description": "CIDR range of the Virtual Network."
+        "description": "CIDR range of the virtual network."
       }
     },
     "Subnet1CIDRRange": {
       "type": "string",
       "defaultValue": "10.0.0.0/24",
       "metadata": {
-        "description": "CIDR range of the first subnet in the Virtual Network."
+        "description": "CIDR range of the first subnet in the virtual network."
       }
     },
     "Subnet2CIDRRange": {
       "type": "string",
       "defaultValue": "10.0.1.0/24",
       "metadata": {
-        "description": "CIDR range of the second subnet in the Virtual Network."
+        "description": "CIDR range of the second subnet in the virtual network."
       }
     },
     "AvailableSubnet2IPAddress": {
@@ -212,31 +212,35 @@
     "appGwSubnetName": "[parameters('Subnet2')]",
     "appGwSubnetPrefix": "[parameters('Subnet2CIDRRange')]",
     "appGwSubnetID": "[resourceId(variables('ResourceGroupNameOfVirtualNetwork'),'Microsoft.Network/virtualNetworks/subnets',variables('virtualNetworkName'),variables('appGwSubnetName'))]",
+    "backendCertData": "MIIB2DCCAX8CFFvkwj8cUBb+KNQffgdLa+w7BSu+MAoGCCqGSM49BAMCMG8xCzAJBgNVBAYTAlVTMRYwFAYDVQQIDA1NYXNzYWNodXNldHRzMQ8wDQYDVQQHDAZuYXRpY2sxEjAQBgNVBAoMCU1hdGhXb3JrczELMAkGA1UECwwCREMxFjAUBgNVBAMMDW1hdGh3b3Jrcy5jb20wHhcNMjIxMjE1MDIzMjA4WhcNMzIxMjEyMDIzMjA4WjBvMQswCQYDVQQGEwJVUzEWMBQGA1UECAwNTWFzc2FjaHVzZXR0czEPMA0GA1UEBwwGbmF0aWNrMRIwEAYDVQQKDAlNYXRoV29ya3MxCzAJBgNVBAsMAkRDMRYwFAYDVQQDDA1tYXRod29ya3MuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESCAyt8cSVzBBX5/9WZf3YolAo20yXbQi2hoPNp+yAQ41P0Z4IOzdWoVVHwGXSJly7w0GGfuvPUqfpKZgyFwimjAKBggqhkjOPQQDAgNHADBEAiBBGDad5/W52Ed5YVdvQv8wzhTTobDVDWk2twYdc1waWQIgClqMtAKY5zjkOXfXUGhL1SoIWxJTj4cGqFCw/MAkfrc=",
     "mpsHttpPortVar": 9910,
     "mpsFrontEndPort": 445,
     "appGwBePoolName": "[concat(variables('namingInfix'), 'appGwBepool')]",
     "networkSecurityGroupName": "[concat(variables('namingInfix'), '-rdp-nsg')]",
-    "publicIPAddressNameMachine": "servermachine-public-ip",
+    "publicIPAddressNameMachine": "admindashboard-public-ip",
     "redisCacheName": "[concat(variables('namingInfix'), 'redis')]",
     "redisenableNonSslPort": true,
     "redisCacheCapacity": 1,
     "redisCacheFamily": "C",
     "redisCacheSKU": "Standard",
+	  "privateEndpointName": "redisPrivateEndpoint",
+    "privateDnsZoneName": "privatelink.redis.cache.windows.net",
+    "privateEndpointDnsGroupName": "[format('{0}/mydnsgroupname', variables('privateEndpointName'))]",											  
     "appGWprivateIP": "[parameters('AvailableSubnet2IPAddress')]",
     "virtualNetworkNewOrExisting": "[parameters('NewOrExistingVirtualNetwork')]",
-    "licservernicName": "servermachine-nic",
-    "vmName": "servermachine",
+    "licservernicName": "admindashboard-nic",
+    "vmName": "admindashboard",
     "publicIPprop1": {
       "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNameMachine'))]"
     },
     "Platform": "[parameters('Platform')]",
-    "WindowsSKUDisk1": "matlab-production-server-payg-master-22a",
+    "WindowsSKUDisk1": "matlab-production-server-admin-vm-24a",
     "WindowsOfferDisk1": "matlab-production-server-payg-master",
-    "WindowsSKUDisk2": "matlab-production-server-byol-windows-22a",
+    "WindowsSKUDisk2": "matlab-production-server-worker-windows-24a",
     "WindowsOfferDisk2": "matlab-production-server-byol-windows",
     "LinuxSKUDisk1": "[variables('WindowsSKUDisk1')]",
     "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
-    "LinuxSKUDisk2": "matlab-production-server-byol-linux-22a",
+    "LinuxSKUDisk2": "matlab-production-server-worker-linux-24a",
     "LinuxOfferDisk2": "matlab-production-server-byol-linux",
     "WindowsDisk1Version": "latest",
     "WindowsDisk2Version": "latest",
@@ -244,9 +248,9 @@
     "LinuxDisk2Version": "latest",
     "windowsScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.ps1', variables('_artifactsLocationSasToken')))]",
     "linuxScriptURL": "[uri(variables('_artifactsLocation'), concat('scriptScaleSet.sh', variables('_artifactsLocationSasToken')))]",
-    "masterVMScriptURL": "[uri(variables('_artifactsLocation'), concat('initMasterVM.sh', variables('_artifactsLocationSasToken')))]",
+    "adminVMScriptURL": "[uri(variables('_artifactsLocation'), concat('initAdminVM.sh', variables('_artifactsLocationSasToken')))]",
     "commandToExecuteWindows": "[concat('powershell -ExecutionPolicy Unrestricted -File scriptScaleSet.ps1 ' )]",
-    "commandToExecuteLinux": "[concat('echo hello ' )]",
+    "commandToExecuteLinux": "[concat('sudo ./scriptScaleSet.sh')]",
     "AppInsights-AppType": "Node.JS",
     "AppInsights-requestSource": "rest",
     "myAppInsightsInstanceName": "logs-apmservice",
@@ -255,25 +259,25 @@
     "owner": "[resourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
     "offerType": "BYOL",
     "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
-    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2022a/azuredeploy-existing-vnet-R2022a.json",
+    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2024a/azuredeploy-existing-vnet-R2024a.json",
     "flex-parameters": {
       "instanceType": { "value": "Standard_D2s_v3" },
       "clientIPAddress": { "value": "[parameters('Allow connections from')]" },
-      "adminUsername": { "value": "[parameters('adminUsername')]" },
+	"adminUsername": { "value": "[parameters('adminUsername')]" },																
       "adminPassword": { "value": "[parameters('adminPassword')]" },
       "virtualNetworkResourceID": {
         "value": "[variables('virtualNetworkID')]"
       },
       "subnetName": { "value": "[variables('subnetName')]" }
     },
-    "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2022a/scripts/",
+    "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2024a/scripts/",
     "_artifactsLocationSasToken":""
   },
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
       "name": "flex-lm-server",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2021-04-01",
       "condition": "[equals(variables('should-deploy-flex'), 'Yes')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces/',variables('licservernicName'))]",
@@ -533,8 +537,8 @@
               "timestamp": 123456789
             },
             "protectedSettings": {
-              "commandToExecute": "[concat( 'sudo ./initMasterVM.sh ''', variables('storageAccountName'), ''' ''', 'mydbConnection', ''' ''', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://', reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://', variables('appGWprivateIP'), ':444')), ''' ''', reference(variables('subnetRef'), '2022-01-01').addressPrefix, ''' ''', 'Azure', ''' ''', variables('Platform'), ''' ''', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2020-02-02').InstrumentationKey, ''' ''', resourceGroup().name, ''' ''', subscription().subscriptionId, ''' ''', parameters('adminUsername'), ''' ''', parameters('adminPassword'), ''' ''', variables('redisCacheName'), ''' ''', concat('https://', variables('appGWprivateIP'), ':444'), ''' ''', variables('offerType'), '''' )]",
-              "fileUris": ["[variables('masterVMScriptURL')]"]
+              "commandToExecute": "[concat( 'sudo ./initAdminVM.sh ''', variables('storageAccountName'), ''' ''', 'mydbConnection', ''' ''', if(equals(parameters('UsePublicIPAddresses'), 'Yes'), concat('https://', reference(variables('appGwPublicIPAddressName')).dnsSettings.fqdn), concat('https://', variables('appGWprivateIP'), ':444')), ''' ''', reference(variables('subnetRef'), '2022-01-01').addressPrefix, ''' ''', 'Azure', ''' ''', variables('Platform'), ''' ''', reference(resourceId('Microsoft.Insights/components', variables('myAppInsightsInstanceName')), '2020-02-02').InstrumentationKey, ''' ''', resourceGroup().name, ''' ''', subscription().subscriptionId, ''' ''', parameters('adminUsername'), ''' ''', parameters('adminPassword'), ''' ''', variables('redisCacheName'), ''' ''', concat('https://', variables('appGWprivateIP'), ':444'), ''' ''', variables('offerType'), '''' )]",
+              "fileUris": ["[variables('adminVMScriptURL')]"]
             }
           }
         }
@@ -585,6 +589,14 @@
               "data": "[if(equals(parameters('CertificateInputType'), 'Base64-encoded PFX Certificate'), parameters('Base64EncodedPFXCertificateData'), json('null'))]",
               "password": "[if(equals(parameters('CertificateInputType'), 'Base64-encoded PFX Certificate'), parameters('PasswordForBase64EncodedPFXCertificate'), json('null'))]"
             }
+          }
+        ],
+        "trustedRootCertificates": [
+          {
+            "properties": {
+              "data": "[variables('backendCertData')]"
+            },
+            "name": "backendRootCert"
           }
         ],
         "gatewayIPConfigurations": [
@@ -669,14 +681,19 @@
             "name": "dashboardbackend",
             "properties": {
               "port": 9090,
-              "protocol": "Http",
+              "protocol": "Https",
               "cookieBasedAffinity": "Disabled",
-              "pickHostNameFromBackendAddress": true,
               "affinityCookieName": "ApplicationGatewayAffinity",
-              "requestTimeout": 20,
+              "requestTimeout": 300,
               "probe": {
                 "id": "[resourceId('Microsoft.Network/applicationGateways/probes',variables('appGwName'), 'dashboardHealth')]"
-              }
+              },
+              "hostName": "www.myprodserver.com",
+              "trustedRootCertificates": [
+                {
+                  "id": "[resourceId('Microsoft.Network/applicationGateways/trustedRootCertificates',variables('appGwName'), 'backendRootCert')]"
+                }
+              ]  
             }
           }
         ],
@@ -807,20 +824,25 @@
               "path": "/~files/hello.html",
               "interval": 30,
               "timeout": 30,
-              "unhealthyThreshold": 3
+              "unhealthyThreshold": 3,
+			  "match": {
+                "statusCodes": ["200-399"]
+              }
             }
           },
           {
             "name": "dashboardHealth",
             "properties": {
-              "protocol": "Http",
-              "host": "127.0.0.1",
+              "protocol": "Https",
               "path": "/dashboard/index.html",
               "interval": 30,
               "timeout": 30,
               "unhealthyThreshold": 3,
-              "pickHostNameFromBackendHttpSettings": false,
-              "minServers": 0
+              "pickHostNameFromBackendHttpSettings": true,
+              "minServers": 0,
+			  "match": {
+				"statusCodes": ["200-399"]
+              }
             }
           }
         ]
@@ -959,6 +981,81 @@
       }
     },
     {
+	    "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2021-05-01",
+      "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
+      "name": "[variables('privateEndpointName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "subnet": {
+          "id": "[variables('subnetRef')]"
+        },
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('privateEndpointName')]",           
+            "properties": {
+              "privateLinkServiceId": "[resourceId('Microsoft.Cache/Redis', variables('redisCacheName'))]",
+              "groupIds": [
+                                "redisCache"
+                            ]
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Cache/Redis', variables('redisCacheName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('VirtualNetworkName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2020-06-01",
+      "name": "[variables('privateDnsZoneName')]",
+      "location": "global",
+      "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
+      "properties": {},
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('VirtualNetworkName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}/{1}', variables('privateDnsZoneName'), format('{0}-link', variables('privateDnsZoneName')))]",
+      "location": "global",
+      "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[resourceId(variables('ResourceGroupNameOfVirtualNetwork'),'Microsoft.Network/virtualNetworks', variables('VirtualNetworkName'))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('VirtualNetworkName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2021-05-01",
+      "name": "[variables('privateEndpointDnsGroupName')]",
+      "condition": "[equals(parameters('CreateAzureRedisCache'), 'Yes')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "config1",
+            "properties": {
+              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneName'))]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsZoneName'))]",
+        "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]"
+      ]
+    },
+    {											   
       "type": "Microsoft.OperationalInsights/workspaces",
       "name": "[variables('workspaceName')]",
       "apiVersion": "2021-06-01",
