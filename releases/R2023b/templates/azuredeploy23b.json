@@ -259,7 +259,7 @@
     "owner": "[resourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
     "offerType": "BYOL",
     "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
-    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2023b/azuredeploy-existing-vnet-R2023b.json",
+    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/refs/heads/master/releases/v1/latest/azuredeploy.json",
     "flex-parameters": {
       "instanceType": { "value": "Standard_D2s_v3" },
       "clientIPAddress": { "value": "[parameters('Allow connections from')]" },
