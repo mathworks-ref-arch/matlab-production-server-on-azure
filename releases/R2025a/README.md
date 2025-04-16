@@ -1,6 +1,10 @@
 # MATLAB Production Server on Microsoft Azure - R2025a
 Follow these steps to deploy the R2025a MATLAB Production Server reference architecture on Microsoft Azure. To deploy reference architectures for other releases, see [Deploy Reference Architecture for Your Release](/README.md#deploy-reference-architecture-for-your-release). 
 
+## Prerequisites
+If you are using an existing virtual network, then you must manually add a private or service endpoint to the virtual network before deploying MATLAB Production Server in order to create and access the storage account. For details, see [Create Endpoint in Virtual Network](#create-endpoint-in-virtual-network).
+
+
 ## Step 1. Launch Template
 To deploy resources on Azure, click **Deploy to Azure**. The Azure Portal opens in your web browser.
 
@@ -12,10 +16,6 @@ To deploy resources on Azure, click **Deploy to Azure**. The Azure Portal opens 
 
 ## Step 2. Configure Cloud Resources
 
-### Prerequisites
-If you are using an existing virtual network, then you must manually add a private or service endpoint to the virtual network before deploying MATLAB Production Server in order to create and access the storage account. For details, see [Create Endpoint in Virtual Network](#create-endpoint-in-virtual-network).
-
-### Parameter Configuration
 Provide values for parameters in the custom deployment template on the Azure Portal:
 
 | Parameter Name | Value |
