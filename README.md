@@ -86,6 +86,50 @@ resource group.
 
 # FAQ
 
+## How do I deploy to an existing virtual network?
+>**Note:** Your existing virtual network must have at least two available subnets for deployment. 
+
+### Create Service Endpoint in Virtual Network (Since R2025a)
+Starting in R2025a, If you are using an existing virtual network and assign a public IP address to the VM hosting MATLAB Production Server, then you must manually add a service endpoint to the virtual network *before* deploying MATLAB Production Server in order to create and access the storage account. Service Endpoints enable private IP addresses in the VNet to reach the endpoint of an Azure service without needing a public IP address on the VNet. For more details, see [Virtual Network service endpoints](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview).
+
+You can check if such an endpoint already exists by navigating to the Azure Portal, selecting your virtual network, and clicking **Service endpoints**. If no such endpoint is present, follow these steps:
+1. In the Azure Portal, click **Resource groups** and select the virtual network for this deployment.
+1. In the left navigation menu, expand the **Settings** category and click **Service endpoints**.
+1. Click **Add** to add the new endpoint. It must have the following parameters:
+
+    <table>
+      <tr><td><b>Service</b></td><td>Microsoft.Storage</td></tr>
+      <tr><td><b>Subnet</b></td><td>Name of subnet in which the storage account will be deployed</td></tr>      
+    </table>
+
+For more information on creating endpoints, see [Create and associate service endpoint policies](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoint-policies).
+
+### Deploy to Existing Virtual Network
+To deploy MATLAB Production Server to an existing virtual network, set the **Deploy to New or Existing Virtual Network** parameter to `existing`.
+
+Set the following parameter values in the template based on your existing virtual network. 
+
+| Parameter Name          | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Virtual Network Name** |  Specify the name of your existing virtual network or use the default value.   |
+| **Virtual Network CIDR Range** |  Specify the IP address range of the virtual network in CIDR notation or use the default value. |
+| **Subnet 1 CIDR Range** |  Specify the IP address range of the first subnet in CIDR notation or use the default value. The first subnet hosts the dashboard and other resources. | 
+| **Subnet 2 CIDR Range** | Specify the IP address range of the second subnet in CIDR notation or use the default value. The second subnet hosts the application gateway. |
+| **Available Subnet 2 IP Address** |   Specify an unused IP address from Subnet 2 or use the default value. This IP address serves as the private IP of the application gateway. |
+| **Resource Group Name Of Virtual Network** |   Specify the resource group name of the virtual network or use the default value.    |
+
+### Ports to Open in Existing Virtual Network
+If you are deploying to an existing virtual network, open these ports in your network:
+| Port | Description |
+| ------------------|---------------------------------------------------------------------------------------------------------------- |
+| `443` | Required for communicating with the dashboard |
+| `8000`, `8004`, `8080`, `9090`, `9910` | Required for communication between the dashboard, MATLAB Production Server workers, and various microservices within the virtual network. These ports do not need to be open to the Internet. | 
+| `27000` | Required for communication between the Network License Manager and the workers. | 
+| `65200`, `65535` | Required for the Azure application gateway health check to work. These ports need to be accessible over the Internet. For more information, see [MSDN Community](https://social.msdn.microsoft.com/Forums/azure/en-US/96a77f18-3b71-45d2-a213-c4ba63fd4e63/internal-application-gateway-backend-health-is-unkown?forum=WAVirtualMachinesVirtualNetwork). | 
+| `22`, `3389` | (Optional) Enables Remote Desktop functionality, which can be used for troubleshooting and debugging. |
+<br>
+You can close ports 22 and 3389 after deployment.
+
 ## Why do requests to the server fail with errors such as “untrusted certificate” or “security exception”?  
 
 These errors occur either when CORS is not enabled on the server or when the server endpoint uses a self-signed certificate. 
