@@ -90,7 +90,7 @@ resource group.
 >**Note:** Your existing virtual network must have at least two available subnets for deployment. 
 
 ### Create Service Endpoint in Virtual Network (Since R2025a)
-Starting in R2025a, If you are using an existing virtual network and assign a public IP address to the VM hosting MATLAB Production Server, then you must manually add a service endpoint to the virtual network *before* deploying MATLAB Production Server in order to create and access the storage account. Service Endpoints enable private IP addresses in the VNet to reach the endpoint of an Azure service without needing a public IP address on the VNet. For more details, see [Virtual Network service endpoints](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview).
+Starting in R2025a, if you are using an existing virtual network and assign a public IP address to the VM hosting MATLAB Production Server, you must manually add a service endpoint to the virtual network *before* deploying MATLAB Production Server in order to create and access the storage account. By enabling service endpoints, you can apply network rules that restrict access to specific subnets within the virtual network, ensuring controlled connectivity to Azure Storage. For more information, see [Allow access from selected virtual network subnets using service endpoints](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security?tabs=azure-portal#grant-access-from-a-virtual-network).
 
 You can check if such an endpoint already exists by navigating to the Azure Portal, selecting your virtual network, and clicking **Service endpoints**. If no such endpoint is present, follow these steps:
 1. In the Azure Portal, click **Resource groups** and select the virtual network for this deployment.
@@ -128,6 +128,7 @@ If you are deploying to an existing virtual network, open these ports in your ne
 | `65200`, `65535` | Required for the Azure application gateway health check to work. These ports need to be accessible over the Internet. For more information, see [MSDN Community](https://social.msdn.microsoft.com/Forums/azure/en-US/96a77f18-3b71-45d2-a213-c4ba63fd4e63/internal-application-gateway-backend-health-is-unkown?forum=WAVirtualMachinesVirtualNetwork). | 
 | `22`, `3389` | (Optional) Enables Remote Desktop functionality, which can be used for troubleshooting and debugging. |
 <br>
+
 You can close ports 22 and 3389 after deployment.
 
 ## Why do requests to the server fail with errors such as “untrusted certificate” or “security exception”?  
