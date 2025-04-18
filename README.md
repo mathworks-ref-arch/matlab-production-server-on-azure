@@ -89,8 +89,21 @@ resource group.
 ## How do I deploy to an existing virtual network?
 >**Note:** Your existing virtual network must have at least two available subnets for deployment. 
 
+### Ports to Open in Existing Virtual Network
+If you are deploying to an existing virtual network, open these ports in your network:
+| Port | Description |
+| ------------------|---------------------------------------------------------------------------------------------------------------- |
+| `443` | Required for communicating with the dashboard |
+| `8000`, `8004`, `8080`, `9090`, `9910` | Required for communication between the dashboard, MATLAB Production Server workers, and various microservices within the virtual network. These ports do not need to be open to the Internet. | 
+| `27000` | Required for communication between the Network License Manager and the workers. | 
+| `65200`, `65535` | Required for the Azure application gateway health check to work. These ports need to be accessible over the Internet. For more information, see [MSDN Community](https://social.msdn.microsoft.com/Forums/azure/en-US/96a77f18-3b71-45d2-a213-c4ba63fd4e63/internal-application-gateway-backend-health-is-unkown?forum=WAVirtualMachinesVirtualNetwork). | 
+| `22`, `3389` | (Optional) Enables Remote Desktop functionality, which can be used for troubleshooting and debugging. |
+<br>
+
+You can close ports 22 and 3389 after deployment.
+
 ### Create Service Endpoint in Virtual Network (Since R2025a)
-Starting in R2025a, if you are using an existing virtual network and assign a public IP address to the VM hosting MATLAB Production Server, you must manually add a service endpoint to the virtual network *before* deploying MATLAB Production Server in order to create and access the storage account. By enabling service endpoints, you can apply network rules that restrict access to specific subnets within the virtual network, ensuring controlled connectivity to Azure Storage. For more information, see [Allow access from selected virtual network subnets using service endpoints](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security?tabs=azure-portal#grant-access-from-a-virtual-network).
+Starting in R2025a, if you are using an existing virtual network and assign a public IP address to the VM hosting MATLAB Production Server, you must manually add a service endpoint to the virtual network *before* deploying MATLAB Production Server in order to create and access the storage account. For more information, see [Grant access from a virtual network](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security?tabs=azure-portal#grant-access-from-a-virtual-network).
 
 You can check if such an endpoint already exists by navigating to the Azure Portal, selecting your virtual network, and clicking **Service endpoints**. If no such endpoint is present, follow these steps:
 1. In the Azure Portal, click **Resource groups** and select the virtual network for this deployment.
@@ -118,18 +131,6 @@ Set the following parameter values in the template based on your existing virtua
 | **Available Subnet 2 IP Address** |   Specify an unused IP address from Subnet 2 or use the default value. This IP address serves as the private IP of the application gateway. |
 | **Resource Group Name Of Virtual Network** |   Specify the resource group name of the virtual network or use the default value.    |
 
-### Ports to Open in Existing Virtual Network
-If you are deploying to an existing virtual network, open these ports in your network:
-| Port | Description |
-| ------------------|---------------------------------------------------------------------------------------------------------------- |
-| `443` | Required for communicating with the dashboard |
-| `8000`, `8004`, `8080`, `9090`, `9910` | Required for communication between the dashboard, MATLAB Production Server workers, and various microservices within the virtual network. These ports do not need to be open to the Internet. | 
-| `27000` | Required for communication between the Network License Manager and the workers. | 
-| `65200`, `65535` | Required for the Azure application gateway health check to work. These ports need to be accessible over the Internet. For more information, see [MSDN Community](https://social.msdn.microsoft.com/Forums/azure/en-US/96a77f18-3b71-45d2-a213-c4ba63fd4e63/internal-application-gateway-backend-health-is-unkown?forum=WAVirtualMachinesVirtualNetwork). | 
-| `22`, `3389` | (Optional) Enables Remote Desktop functionality, which can be used for troubleshooting and debugging. |
-<br>
-
-You can close ports 22 and 3389 after deployment.
 
 ## Why do requests to the server fail with errors such as “untrusted certificate” or “security exception”?  
 
