@@ -6,6 +6,7 @@
     - If you assign a public IP address to the VM hosting MATLAB Production Server, then public network access to the storage account is enabled only from selected virtual networks and IP addresses. Previously, public network access was enabled from all networks.
     - If you assign a private IP address to the VM hosting MATLAB Production Server, then public network access to the storage account is disabled. You must use a bastion host or jump box VM to connect to the storage account. Previously, storage account access was enabled from all networks.
 - If you deploy using an existing virtual network and assign a public IP address to the VM hosting MATLAB Production Server, you must manually add a service endpoint to the virtual network before deploying MATLAB Production Server in order to create and access the storage account. For details, see [How do I deploy to an existing virtual network?](/README.md#how-do-i-deploy-to-an-existing-virtual-network)
+- You can now specify a range of IP addresses for the **Allow Connections From** parameter with a comma-separated list.
 
 ### R2024b
 - You can now deploy MATLAB Production Server R2024b using the Microsoft Azure reference architecture.
