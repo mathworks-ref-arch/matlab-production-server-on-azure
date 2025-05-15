@@ -107,7 +107,7 @@ configure and manage server instances on the cloud. If your solution uses privat
 1.  Click **Outputs** from the left pane. Copy the parameter value for **dashboardURL** and paste it in a browser.  
 1.  Log in using the administrator username and password that you specified in the [Configure Cloud Resources](#step-2-configure-cloud-resources) step of the deployment process.
 
-![MATLAB Production Server Dashboard](/releases/R2022a/images/dashboardLogin.png?raw=true) 
+![MATLAB Production Server Dashboard](/releases/R2022b/images/dashboardLogin.png?raw=true) 
 
 You are now ready to use MATLAB Production Server on Azure. 
 
