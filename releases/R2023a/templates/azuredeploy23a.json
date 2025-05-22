@@ -259,17 +259,29 @@
     "owner": "[resourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
     "offerType": "BYOL",
     "should-deploy-flex": "[parameters('DeployNetworkLicenseManagerforMATLAB')]",
-    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/master/releases/R2023a/azuredeploy-existing-vnet-R2023a.json",
+    "flex-arm-template-link": "https://raw.githubusercontent.com/mathworks-ref-arch/license-manager-for-matlab-on-azure/refs/heads/master/releases/v1/latest/azuredeploy.json",
     "flex-parameters": {
-      "instanceType": { "value": "Standard_D2s_v3" },
-      "clientIPAddress": { "value": "[parameters('Allow connections from')]" },
-	    "adminUsername": { "value": "[parameters('adminUsername')]" },																
-      "adminPassword": { "value": "[parameters('adminPassword')]" },
-      "virtualNetworkResourceID": {
-        "value": "[variables('virtualNetworkID')]"
+      "instanceType": { "value": "Standard_D2s_v3"
       },
-      "subnetName": { "value": "[variables('subnetName')]" }
-    },
+      "clientIPAddressList": {
+          "value": "[parameters('Allow connections from')]"
+      },
+      "adminUsername": {
+          "value": "[parameters('adminUsername')]"
+      },
+      "adminPassword": {
+          "value": "[parameters('adminPassword')]"
+      },
+      "existingVnetResourceID": {
+          "value": "[variables('virtualNetworkID')]"
+      },
+      "existingSubnetName": {
+          "value": "[variables('subnetName')]"
+      },
+      "createPublicIPAddress":{
+        "value": "[parameters('UsePublicIPAddresses')]"
+    }
+  },
     "_artifactsLocation":"https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-azure/master/releases/R2023a/scripts/",
     "_artifactsLocationSasToken":""
   },
