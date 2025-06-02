@@ -6,6 +6,7 @@
 name: MATLAB Production Server Ref Arch Azure Existing Virtual Network Health Check Test on Windows in West Eu
 
 on:
+ workflow_dispatch:
  schedule:
     - cron: '0 16 * * 2'
 jobs:
