@@ -53,7 +53,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
             subnet.service_endpoints.append(
                 ServiceEndpointPropertiesFormat(service='Microsoft.Storage')
             )
-            updated_subnet = network_client.subnets.create_or_update(
+            updated_subnet = network_client.subnets.begin_create_or_update(
                 resource_name_vnet,
                 vnet_name,
                 subnet_name,
@@ -90,7 +90,10 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         f"https://github.com/mathworks-ref-arch/{ref_arch_name}/blob/master/releases/"
     )
 
-    latest_releases = [re.findall("releases/(R\d{4}[ab]\\b)", res.text)[-1], re.findall("releases/(R\d{4}[ab]\\b)", res.text)[-2]]
+    latest_releases = [
+        re.findall(r"releases/(R\d{4}[ab]\b)", res.text)[-1],
+        re.findall(r"releases/(R\d{4}[ab]\b)", res.text)[-2]
+    ]
     for i in range(2):
         matlab_release = latest_releases[i]
         print("Testing Health Check Release: " + matlab_release + "\n")

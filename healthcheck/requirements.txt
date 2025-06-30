@@ -1,8 +1,9 @@
-azure-functions
-azure-mgmt-resource==8.0.1
-azure-mgmt-marketplaceordering==0.1.0
-azure-mgmt-compute==4.6.2
-azure-mgmt-network==10.2.0
-azure-common==1.1.24
-adal==1.2.2
-msrestazure==0.6.2
+azure-functions==1.23.0
+azure-identity==1.23.0
+azure-mgmt-resource==24.0.0
+azure-mgmt-marketplaceordering==1.1.0
+azure-mgmt-compute==34.1.0
+azure-mgmt-network==29.0.0
+azure-common==1.1.28
+adal==1.2.7
+msrestazure==0.6.4
