@@ -1,5 +1,6 @@
 import urllib.request, json
 import azure.functions as func
+import uuid
 
 from azure.mgmt.resource.resources.models import DeploymentMode
 from azure.mgmt.compute import ComputeManagementClient
@@ -45,10 +46,12 @@ def deploy_production_template(credentials,
     print("Beginning the deployment... \n\n")
     # Deploy template.
 
-    deployment = resource_client.deployments.create_or_update(
+    deployment = resource_client.deployments.begin_create_or_update(
         resource_group_name,
         f'{ref_arch_name}-deployment',
-        deployment_properties
+        {
+            "properties": deployment_properties
+        }
     )
 
     # Block because of VM quotas.
@@ -69,7 +72,7 @@ def create_vnet(credentials,
     vnet_cidr):
 
     resource_client = getResourceClient.get_resource_client(credentials, subscription_id)
-    vnet_name = 'my_vnet'
+    vnet_name = "my_vnet-" + str(uuid.uuid4())
 
     # Create resource group
     print("Creating a resource group with a virtual network... \n")
@@ -82,7 +85,7 @@ def create_vnet(credentials,
     print("Resource group created...\n")
 
     # Create virtual network
-    async_vnet_creation = network_client.virtual_networks.create_or_update(
+    async_vnet_creation = network_client.virtual_networks.begin_create_or_update(
           resource_name_vnet,
           vnet_name,
           {
@@ -106,7 +109,7 @@ def create_vnet(credentials,
 
          # Create Subnet
          subnet_name = "subnet" + str(i)
-         async_subnet_creation = network_client.subnets.create_or_update(
+         async_subnet_creation = network_client.subnets.begin_create_or_update(
                                                resource_name_vnet,
                                                vnet_name,
                                                subnet_name,
@@ -123,6 +126,6 @@ def create_vnet(credentials,
 def delete_resourcegroup(credentials, subscription_id, resource_group_name) :
     resource_client = getResourceClient.get_resource_client(credentials, subscription_id)
     print("Deleting the deployment... \n\n")
-    deployment_deletion = resource_client.resource_groups.delete(resource_group_name)
+    deployment_deletion = resource_client.resource_groups.begin_delete(resource_group_name)
     print(deployment_deletion)
     #return deployment_deletion
