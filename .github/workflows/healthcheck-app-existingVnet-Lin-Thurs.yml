@@ -34,5 +34,5 @@ jobs:
     - name: MPS ref Arch Existing Virtual Network Health check test on linux in Japan East
       run: |
         cd healthcheck
-        python test_healthcheck_existing_vnet.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }} ${{ secrets.username }} ${{ secrets.password }} ${{ secrets.ipaddress }} ${{ secrets.base64certdata }} ${{ secrets.base64password }} "japaneast" "Linux"
+        python test_healthcheck_existing_vnet.py ${{ secrets.TenantId }} ${{ secrets.ClientId }} ${{ secrets.ClientSecret }} ${{ secrets.SubscriptionId }} ${{ secrets.username }} ${{ secrets.password }} ${{ secrets.base64certdata }} ${{ secrets.base64password }} "japaneast" "Linux"
 

@@ -14,7 +14,7 @@ from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.network.models import ServiceEndpointPropertiesFormat, Subnet
 
 
-def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, base64certdata, base64password, location_arg, platform_arg):
+def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, base64certdata, base64password, location_arg, platform_arg):
 
     # Deploy template
     # Reference architecture in production.
@@ -26,6 +26,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
     client_secret = client_secret_arg
     subscription_id = subscription_id_arg
     location = location_arg
+    ipAddress = requests.get("https://api.ipify.org").text + "/32"
 
     # Subnets & virtual network info
     subnets_cidr = ['10.0.0.0/24', '10.0.1.0/24']
@@ -63,13 +64,12 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
 
     except Exception as e:
         raise(e)
-    print(subnet_names[0])
-    print(subnet_names[1])
+
     # Parameters for deployment
     parameters = {
        "adminUsername": username,
        "adminPassword": password,
-       "Allow connections from": "0.0.0.0/0",
+       "Allow connections from": ipAddress,
        "Platform": platform_arg,
        "NewOrExistingVirtualNetwork": "existing",
        "VirtualNetworkName": vnet_name,
@@ -82,8 +82,6 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
        "Base64EncodedPFXCertificateData": base64certdata,
        "PasswordForBase64EncodedPFXCertificate": base64password
     }
-
-    print(parameters)
 
     # Find latest MATLAB release from Github page and get template json path.
     res = requests.get(
@@ -127,4 +125,4 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
     print("Deleted the deployment which contains the virtual network")
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], sys.argv[11])
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10])
