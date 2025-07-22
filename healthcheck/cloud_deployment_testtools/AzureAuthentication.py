@@ -1,6 +1,6 @@
 from azure.common import credentials
 from azure.common.credentials import ServicePrincipalCredentials
-from msrestazure.azure_active_directory import AADTokenCredentials
+from azure.identity import ClientSecretCredential
 import adal
 
 def authenticate_client_key(tenant_id, client_id, client_secret):
@@ -14,6 +14,6 @@ def authenticate_client_key(tenant_id, client_id, client_secret):
 
     context = adal.AuthenticationContext(authority_uri, api_version=None)
     mgmt_token = context.acquire_token_with_client_credentials(resource_uri, client_id, client_secret)
-    credentials = AADTokenCredentials(mgmt_token, client_id)
+    credentials = ClientSecretCredential(tenant_id, client_id, client_secret)
 
     return credentials

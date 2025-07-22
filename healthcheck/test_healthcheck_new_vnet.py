@@ -11,7 +11,7 @@ import datetime
 import cloud_deployment_testtools.AzureAuthentication as AzureAuth
 import cloud_deployment_testtools.deploy as DeployOp
 
-def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, ipAddress, base64certdata, base64password, location_arg, platform_arg):
+def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, username, password, base64certdata, base64password, location_arg, platform_arg):
     # Reference architectures in production.
     ref_arch_name = 'matlab-production-server-on-azure'
 
@@ -21,6 +21,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
     client_secret = client_secret_arg
     subscription_id = subscription_id_arg
     location = location_arg
+    ipAddress = requests.get("https://api.ipify.org").text + "/32"
 
     parameters = {
         "adminUsername": username,
@@ -37,7 +38,10 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         f"https://github.com/mathworks-ref-arch/{ref_arch_name}/blob/master/releases/"
     )
 
-    latest_releases = [re.findall("releases/(R\d{4}[ab]\\b)", res.text)[-1], re.findall("releases/(R\d{4}[ab]\\b)", res.text)[-2]]
+    latest_releases = [
+        re.findall(r"releases/(R\d{4}[ab]\b)", res.text)[-1],
+        re.findall(r"releases/(R\d{4}[ab]\b)", res.text)[-2]
+    ]
     for i in range(2):
         matlab_release = latest_releases[i]
         print("Testing Health Check Release: " + matlab_release + "\n")
@@ -48,7 +52,6 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         ct = datetime.datetime.now()
         print("Date time before deployment of stack:-", ct)
         credentials = AzureAuth.authenticate_client_key(tenant_id, client_id, client_secret)
-
         try:
             deployment_result = DeployOp.deploy_production_template(credentials,
                                                    subscription_id,
@@ -67,4 +70,4 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
             print("Date time after deployment and deletion of stack:-", ct)
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], sys.argv[11])
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10])
