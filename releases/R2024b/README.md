@@ -1,5 +1,5 @@
 # MATLAB Production Server on Microsoft Azure - R2024b
-Follow these steps to deploy the R2024b MATLAB Production Server reference architecture on Microsoft Azure. To deploy reference architectures for other releases, see [Deploy Reference Architecture for Your Release](/README.md#deploy-reference-architecture-for-your-release). 
+Follow these steps to deploy the R2024b MATLAB Production Server reference architecture on Microsoft Azure. To deploy reference architectures for other releases, see [Deploy Reference Architecture for Your Release](/README.md?tab=readme-ov-file#deploy-reference-architecture-for-your-release).
 
 ## Step 1. Launch Template
 To deploy resources on Azure, click **Deploy to Azure**. The Azure Portal open in your web browser.
