@@ -1,5 +1,8 @@
 ## Release Notes for MATLAB Production Server on Microsoft Azure
 
+### R2025b
+- You can now deploy MATLAB Production Server R2025b using the Microsoft Azure reference architecture.
+
 ### R2025a
 - You can now deploy MATLAB Production Server R2025a using the Microsoft Azure reference architecture.
 - The **Assign Public IP Address to VM Hosting MATLAB Production Server** parameter of the deployment template now controls access to the storage account. For details, see the **Assign Public IP Address to VM Hosting MATLAB Production Server** parameter in the [Configure Cloud Resources](/releases/R2025a/README.md#step-2-configure-cloud-resources) step of the deployment process.
