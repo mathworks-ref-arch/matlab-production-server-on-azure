@@ -45,7 +45,7 @@ def main(tenant_id_arg, client_id_arg, client_secret_arg, subscription_id_arg, u
         re.findall(r"releases/(R\d{4}[ab]\b)", res.text)[-4],
         re.findall(r"releases/(R\d{4}[ab]\b)", res.text)[-5]
     ]
-    for i in range(2):
+    for i in range(5):
         matlab_release = latest_releases[i]
         print("Testing Health Check Release: " + matlab_release + "\n")
         github_base_dir = "https://raw.githubusercontent.com/mathworks-ref-arch"
