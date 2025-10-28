@@ -3,14 +3,14 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "Server VM Instance Size": {
-            "defaultValue": "Standard_D4s_v3",
+            "defaultValue": "Standard_D4_v4",
             "type": "String",
             "metadata": {
                 "description": "Each VM instance will run multiple workers. Select a VM size that is appropriate for your needs. It is recommended that you choose a VM size where the number of cores on your VM match the number of workers per VM you plan on using."
             }
         },
         "dashboardVMSize": {
-            "defaultValue": "Standard_D1_v2",
+            "defaultValue": "Standard_D2_v4",
             "type": "String",
             "metadata": {
                 "description": "Size of the server dashboard VM. The dashboard manages server settings and deployed applications. Since this VM does not perform any significant computation, a smaller size is recommended."
@@ -256,13 +256,13 @@
             "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNameMachine'))]"
         },
         "Platform": "[parameters('Platform')]",
-        "WindowsSKUDisk1": "matlab-production-server-admin-vm-25b",
+        "WindowsSKUDisk1": "matlab-production-server-admin-vm-25b-gen2",
         "WindowsOfferDisk1": "matlab-production-server-payg-master",
         "WindowsSKUDisk2": "matlab-production-server-byol-windows-25b",
         "WindowsOfferDisk2": "matlab-production-server-byol-windows",
         "LinuxSKUDisk1": "[variables('WindowsSKUDisk1')]",
         "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
-        "LinuxSKUDisk2": "matlab-production-server-worker-linux-25b",
+        "LinuxSKUDisk2": "matlab-production-server-worker-linux-25b-gen2",
         "LinuxOfferDisk2": "matlab-production-server-byol-linux",
         "WindowsDisk1Version": "latest",
         "WindowsDisk2Version": "latest",
