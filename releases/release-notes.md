@@ -2,6 +2,7 @@
 
 ### R2025b
 - You can now deploy MATLAB Production Server R2025b using the Microsoft Azure reference architecture.
+- Starting October 2025, Linux servers use Ubuntu 24.04 and Hyper-V generation 2 for improved performance and security.
 
 ### R2025a
 - You can now deploy MATLAB Production Server R2025a using the Microsoft Azure reference architecture.
