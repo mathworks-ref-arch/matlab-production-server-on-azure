@@ -258,7 +258,7 @@
         "Platform": "[parameters('Platform')]",
         "WindowsSKUDisk1": "matlab-production-server-admin-vm-26a",
         "WindowsOfferDisk1": "matlab-production-server-payg-master",
-        "WindowsSKUDisk2": "matlab-production-server-byol-windows-26a",
+        "WindowsSKUDisk2": "matlab-production-server-worker-windows-26a",
         "WindowsOfferDisk2": "matlab-production-server-byol-windows",
         "LinuxSKUDisk1": "[variables('WindowsSKUDisk1')]",
         "LinuxOfferDisk1": "[variables('WindowsOfferDisk1')]",
