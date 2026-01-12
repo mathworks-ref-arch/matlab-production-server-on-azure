@@ -1,5 +1,5 @@
-# MATLAB Production Server on Microsoft Azure - R2025b
-Follow these steps to deploy the R2025b MATLAB Production Server reference architecture on Microsoft Azure. To deploy reference architectures for other releases, see [Deploy Reference Architecture for Your Release](/README.md?tab=readme-ov-file#deploy-reference-architecture-for-your-release).
+# MATLAB Production Server on Microsoft Azure - R2026a
+Follow these steps to deploy the R2026a MATLAB Production Server reference architecture on Microsoft Azure. To deploy reference architectures for other releases, see [Deploy Reference Architecture for Your Release](/README.md?tab=readme-ov-file#deploy-reference-architecture-for-your-release).
 
 ## Prerequisites
 Before deploying MATLAB Production within an existing virtual network, you must configure the virtual network to enable connectivity. For details, see [How do I deploy to an existing virtual network?](/README.md?tab=readme-ov-file#how-do-i-deploy-to-an-existing-virtual-network) in the FAQ.
@@ -8,9 +8,9 @@ Before deploying MATLAB Production within an existing virtual network, you must 
 ## Step 1. Launch Template
 To deploy resources on Azure, click **Deploy to Azure**. The Azure Portal opens in your web browser.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2025b%2Ftemplates%2Fazuredeploy25b.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmathworks-ref-arch%2Fmatlab-production-server-on-azure%2Fmaster%2Freleases%2FR2026a%2Ftemplates%2Fazuredeploy26a.json)
 
-> MATLAB Release: R2025b
+> MATLAB Release: R2026a
 
 <p>Creating resources on Azure can take at least 30 minutes.</p>
 
@@ -24,7 +24,7 @@ Provide values for parameters in the custom deployment template on the Azure Por
 | **Resource group**          | Choose a name for the resource group that will hold the resources. It is recommended you create a new resource group for each deployment. This allows all resources in a group to be deleted simultaneously. <p><em>Example:</em> `Saveros`</p>                                                                                                                                                                                                                                                                    |
 | **Region**                | Choose the region to start resources in. Ensure that you select a location which supports your requested instance types. To check which services are supported in each location, see [Azure Region Services](<https://azure.microsoft.com/en-gb/regions/services/>). MathWorks recommends using `East US` or `East US 2`. <p><em>Example:</em> `East US`</p> |    
 | **Location**                | Region to store resources in. All resources are deployed in the same region as the resource group. <p><em>Examples:</em> `eastus`, `westus`, `westus3` </p> |  |                                         
-| **Server VM Instance Size** | Specify the size of the VM you plan on using for installing MATLAB Production Server. Each MATLAB Production Server instance runs on a VM and each instance will run multiple workers. We recommend you choose a VM size where the number of cores on your VM matches the number of MATLAB workers per VM you plan on using. The template defaults to `Standard_D4_v4`. This configuration has 4 vCPUs and 16 GiB of Memory. For Windows workers, choose a VM size that supports Hyper-V generation 1. For Linux workers, choose a VM size that supports Hyper-V generation 2. For more information, see the [Azure documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-general).<p><em>Examples:</em></p><p> `Standard_D8_v4` Supported for both Windows and Linux </p><p> `Standard_D16as_v4` Supported for both Windows and Linux </p><p> `Standard_D2nds_v6` Supported for Linux, unsupported for Windows </p>|
+| **Server VM Instance Size** | Specify the size of the VM you plan on using for installing MATLAB Production Server. Ensure that the VM supports Hyper-V generation 2. Each MATLAB Production Server instance runs on a VM and each instance will run multiple workers. We recommend you choose a VM size where the number of cores on your VM matches the number of MATLAB workers per VM you plan on using. The template defaults to `Standard_D4_v4`. This configuration has 4 vCPUs and 16 GiB of Memory. For more information, see the [Azure documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-general).<p><em>Examples:</em></p><p> `Standard_D8_v4`</p><p> `Standard_D16as_v4`  </p><p> `Standard_D2nds_v6`  </p>|
 | **Dashboard VM Size** | Specify the size of the VM you plan on using for the MATLAB Production Server dashboard. The dashboard lets you configure server settings and manage deployed applications. In most cases, choosing the smallest VM size is adequate. The template defaults to `Standard_D2_v4`. For more information, see the [Azure documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-general). <p><em>Example:</em> `Standard_D4_v4`</p> |
 | **Instance Count**          | Number of VMs to run MATLAB Production Server instances. Each MATLAB Production Server instance runs on a VM and each instance runs multiple workers. <p><em>Example:</em> 6</p><p>If you have a standard 24 worker MATLAB Production Server license and select `Standard_D4_v4` VM (4 cores) as the Server VM Instance Size, you need 6 VMs to fully use the workers in your license. Therefore, your instance count will be 6.</p><p>You can always underprovision the number of VMs, in which case you may end up using fewer workers than you are licensed for.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | **Admin Username**          | Specify the administrator username for all VMs. Use this username to log in to the MATLAB Production Server dashboard and Network License Manager. |
@@ -81,7 +81,7 @@ configure and manage server instances on the cloud. If your solution uses privat
 1.  Click **Outputs** from the left pane. Copy the parameter value for **dashboardURL** and paste it in a browser.  
 1.  Log in using the administrator username and password that you specified in the [Configure Cloud Resources](#step-2-configure-cloud-resources) step of the deployment process.
 
-![MATLAB Production Server Dashboard](/releases/R2025b/images/dashboardLogin.png?raw=true) 
+![MATLAB Production Server Dashboard](/releases/R2026a/images/dashboardLogin.png?raw=true) 
 
 You are now ready to use MATLAB Production Server on Azure. 
 
