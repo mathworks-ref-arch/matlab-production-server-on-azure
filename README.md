@@ -29,7 +29,7 @@ configure and manage server instances on the cloud. For more information, see [M
 For information about the architecture of this solution, see [Architecture and Resources](#architecture-and-resources).
 
 # Deploy Reference Architecture for Your Release
-To deploy the reference architecture, select your MATLAB Production Server release from the table and follow the instructions to deploy the server using the provided template. A deployment of MATLAB Production Server supports MATLAB Runtime versions up to five releases back.
+To deploy the reference architecture, select your MATLAB Production Server release from the table and follow the instructions to deploy the server using the provided template. A deployment of MATLAB Production Server supports MATLAB Runtime versions up to five releases back. See [Release Notes](release-notes.md) for more information about each release.
 | Release | Supported MATLAB Runtime Versions | Status |
 | ------- | --------------------------------- | ------ |
 | [R2026a](releases/R2026a/README.md) | R2026a, R2025b, R2025a, R2024b, R2024a, R2023b | ✅ Template available. |
